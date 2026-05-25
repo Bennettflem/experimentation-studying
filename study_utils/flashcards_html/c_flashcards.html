@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Deep C Review — Flashcards</title>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a22;
+    --surface2: #1e2330;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8eaf0;
+    --muted: #7a8099;
+    --accent: #4f8ef7;
+    --accent-dim: rgba(79,142,247,0.15);
+    --green: #3ecf8e;
+    --green-dim: rgba(62,207,142,0.12);
+    --red: #f76f6f;
+    --red-dim: rgba(247,111,111,0.12);
+    --amber: #f7b955;
+    --mono: 'Courier New', Courier, monospace;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  /* ── Layout ── */
+  .app {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+  }
+
+  /* ── Header ── */
+  .header {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+  .header-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .header select {
+    flex: 1;
+    min-width: 0;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+    font-size: 13px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a8099' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+    cursor: pointer;
+  }
+  .header-btns { display: flex; gap: 6px; }
+  .icon-btn {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    border-radius: var(--radius-sm);
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer;
+    transition: color .15s, background .15s;
+    flex-shrink: 0;
+  }
+  .icon-btn:active { background: var(--surface2); color: var(--text); }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .stat {
+    flex: 1;
+    padding: 8px 4px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1; }
+  .stat-num.green { color: var(--green); }
+  .stat-num.red { color: var(--red); }
+  .stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    height: 3px;
+    background: var(--surface2);
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width .4s ease;
+  }
+
+  /* ── Main scroll area ── */
+  .main {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── Card counter ── */
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .section-pill {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+  }
+
+  /* ── Flashcard ── */
+  .card-scene {
+    perspective: 1000px;
+    width: 100%;
+    cursor: pointer;
+  }
+  .card-inner {
+    position: relative;
+    width: 100%;
+    min-height: 220px;
+    transform-style: preserve-3d;
+    transition: transform .42s cubic-bezier(.4,0,.2,1);
+  }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute;
+    top: 0; left: 0; width: 100%;
+    min-height: 220px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--radius);
+    padding: 18px 18px 52px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card-front {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+  }
+  .card-back {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    transform: rotateY(180deg);
+  }
+  .card-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+  }
+  .card-front .card-label { color: var(--accent); }
+  .card-q {
+    font-size: clamp(14px, 3.5vw, 17px);
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.55;
+    white-space: pre-wrap;
+    flex: 1;
+  }
+  .card-a {
+    font-size: clamp(12px, 3vw, 14px);
+    color: var(--text);
+    line-height: 1.65;
+    flex: 1;
+    overflow-y: auto;
+    max-height: 55vh;
+    -webkit-overflow-scrolling: touch;
+  }
+  .card-a pre {
+    font-family: var(--mono);
+    font-size: clamp(10px, 2.5vw, 12px);
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin: 8px 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+  .flip-hint {
+    position: absolute;
+    bottom: 14px;
+    right: 16px;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    pointer-events: none;
+  }
+
+  /* ── Action buttons ── */
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .btn {
+    border-radius: var(--radius-sm);
+    padding: 13px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid;
+    transition: transform .1s, opacity .1s;
+    text-align: center;
+    letter-spacing: .01em;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .btn:active { transform: scale(0.97); opacity: .85; }
+  .btn-got {
+    background: var(--green-dim);
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .btn-miss {
+    background: var(--red-dim);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .btn-hidden { visibility: hidden; pointer-events: none; }
+
+  /* ── Nav ── */
+  .nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .btn-nav {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: center;
+    transition: color .15s, background .15s;
+  }
+  .btn-nav:active { background: var(--surface2); color: var(--text); }
+
+  /* ── Done banner ── */
+  .done-banner {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 28px 20px;
+    text-align: center;
+    display: none;
+  }
+  .done-banner h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .done-banner p { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
+  .done-banner .btn-restart {
+    background: var(--accent-dim);
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 4px;
+  }
+  .done-banner .btn-restart:active { opacity: .8; }
+
+  /* ── Hide card when done ── */
+  .card-scene.hidden, .actions.hidden, .nav.hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <span class="header-title">Deep C</span>
+    <select id="sectionSel" onchange="filterSection()">
+      <option value="all">All sections (130)</option>
+      <option value="Memory Layout">1 — Memory Layout (12)</option>
+      <option value="Pointers">2 — Pointers (18)</option>
+      <option value="Strings">3 — Strings (15)</option>
+      <option value="Memory Functions">4 — Memory Functions (15)</option>
+      <option value="Undefined Behavior">5 — Undefined Behavior (12)</option>
+      <option value="Type System">6 — Type System (10)</option>
+      <option value="Structs &amp; Unions">7 — Structs &amp; Unions (8)</option>
+      <option value="Scope &amp; Linkage">8 — Scope &amp; Linkage (7)</option>
+      <option value="Preprocessor">9 — Preprocessor (7)</option>
+      <option value="File I/O">10 — File I/O (6)</option>
+      <option value="Concurrency">11 — Concurrency (5)</option>
+      <option value="Compilation">12 — Compilation (7)</option>
+      <option value="C Patterns">13 — C Patterns (8)</option>
+    </select>
+    <div class="header-btns">
+      <button class="icon-btn" onclick="shuffle()" title="Shuffle">&#x21BB;</button>
+      <button class="icon-btn" onclick="resetDeck()" title="Restart">&#x25B6;</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num" id="sTotal">0</div><div class="stat-lbl">Total</div></div>
+    <div class="stat"><div class="stat-num green" id="sGot">0</div><div class="stat-lbl">Got it</div></div>
+    <div class="stat"><div class="stat-num red" id="sMiss">0</div><div class="stat-lbl">Review</div></div>
+    <div class="stat"><div class="stat-num" id="sLeft">0</div><div class="stat-lbl">Left</div></div>
+  </div>
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Card meta -->
+    <div class="card-meta">
+      <span id="cardCounter">Card 1 of 130</span>
+      <span class="section-pill" id="sectionPill"></span>
+    </div>
+
+    <!-- Flashcard -->
+    <div class="card-scene" id="cardScene" onclick="flipCard()">
+      <div class="card-inner" id="cardInner">
+        <div class="card-face card-front">
+          <div class="card-label">Question</div>
+          <div class="card-q" id="frontQ"></div>
+          <div class="flip-hint">tap to flip &#x21C4;</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-label">Answer</div>
+          <div class="card-a" id="backA"></div>
+          <div class="flip-hint">tap to flip &#x21C4;</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verdict buttons (shown after flip) -->
+    <div class="actions btn-hidden" id="verdictRow">
+      <button class="btn btn-got" onclick="verdict(true)">&#x2713; Got it</button>
+      <button class="btn btn-miss" onclick="verdict(false)">&#x2715; Review again</button>
+    </div>
+
+    <!-- Nav -->
+    <div class="nav" id="navRow">
+      <button class="btn-nav" onclick="prevCard()">&#x2190; Prev</button>
+      <button class="btn-nav" onclick="nextCard()">Next &#x2192;</button>
+    </div>
+
+    <!-- Done -->
+    <div class="done-banner" id="doneBanner">
+      <h2>Deck complete &#x1F3C6;</h2>
+      <p id="doneStats"></p>
+      <button class="btn-restart" onclick="resetDeck()">Start over</button>
+      <button class="btn-restart" onclick="reviewMissed()" id="reviewMissedBtn">Review missed</button>
+    </div>
+
+  </div><!-- .main -->
+</div><!-- .app -->
+
+<script>
+const ALL_CARDS=[
+{s:"Memory Layout",q:"Name the five classic segments of a process's virtual address space and describe what each stores.",a:"1. TEXT — compiled machine instructions (read-only, executable).\n2. DATA — initialized global/static variables (e.g. int x = 5 at file scope).\n3. BSS — uninitialized or zero-initialized globals/statics; OS zeroes it at load time.\n4. HEAP — dynamic allocations (malloc/calloc); grows upward.\n5. STACK — local variables, parameters, return addresses; grows downward on x86."},
+{s:"Memory Layout",q:"In which segment does each live?\n(a) int g = 42; (global)\n(b) int g; (global, no init)\n(c) String literal \"hello\"\n(d) Local int inside main()\n(e) Memory from malloc()\n(f) Machine instructions of a function",a:"(a) DATA — initialized global.\n(b) BSS — zero-initialized global.\n(c) TEXT/rodata — read-only data.\n(d) STACK — automatic storage.\n(e) HEAP — dynamic allocation.\n(f) TEXT — code segment."},
+{s:"Memory Layout",q:"What is the BSS segment? Why does it exist instead of just using the data segment?",a:"BSS holds zero-initialized globals and statics. Because all values are zero, the binary stores only the SIZE needed — not the actual bytes. The OS zero-fills those pages at load time. Keeps binaries small: a 1 MB global array of zeros costs only a few bytes in the .bss entry."},
+{s:"Memory Layout",q:"In what direction does the stack grow on x86-64 Linux? Why does the heap grow the opposite way?",a:"Stack grows DOWNWARD (high to low addresses). Heap grows UPWARD. They are placed at opposite ends of usable address space and grow toward each other, maximizing available space for both without requiring a fixed boundary."},
+{s:"Memory Layout",q:"What is a stack frame? What information does it contain?",a:"A stack frame (activation record) is allocated per function call. It contains:\n- Local (automatic) variables\n- Saved base pointer (RBP on x86-64)\n- Return address\n- Stack-passed arguments (if any)\n- Saved callee-saved registers"},
+{s:"Memory Layout",q:"What happens to stack memory vs heap memory when a function returns?",a:"STACK: frame popped instantly by restoring the stack pointer. Memory not zeroed. A pointer to a local after return is a dangling pointer.\nHEAP: nothing happens automatically. malloc'd memory persists until free() is called. Forgetting free() = memory leak."},
+{s:"Memory Layout",q:"What is a stack overflow? Give two common causes.",a:"Stack overflow: stack grows beyond its limit, causing SIGSEGV.\n1. Deep or infinite recursion — each call adds a frame.\n2. Very large local array — e.g. char buf[10000000]; on the stack."},
+{s:"Memory Layout",q:"What are 'automatic storage duration' vs 'static storage duration'?",a:"Automatic: lifetime is the enclosing block. Memory allocated on entry, released on exit. All local variables are automatic by default.\nStatic: lifetime is the entire program. Allocated once before main() starts. Includes file-scope globals and locals declared static."},
+{s:"Memory Layout",q:"What is virtual address space? How does it relate to physical RAM?",a:"Virtual address space is a per-process illusion created by the OS + MMU. Each process sees a full 64-bit address space regardless of physical RAM. The MMU translates virtual to physical on demand (demand paging). OS swaps pages to disk as needed."},
+{s:"Memory Layout",q:"What is the default stack size on Linux? How can you change it?",a:"Typically 8 MB. Check: ulimit -s\nChange per-session: ulimit -s unlimited\nProgrammatically: setrlimit(RLIMIT_STACK, ...)"},
+{s:"Memory Layout",q:"What is memory-mapped I/O, and where does it appear in virtual address space?",a:"MMIO maps hardware registers or files into the process's virtual address space. Reading/writing those addresses communicates with hardware or files directly. The mmap() syscall handles file mapping. MMIO regions appear in the high part of virtual address space."},
+{s:"Memory Layout",q:"Why is address 0 typically not mapped in a process's virtual address space?",a:"The OS intentionally leaves the zero page (address 0) unmapped so that null pointer dereferences cause an immediate segfault (SIGSEGV) rather than silently reading/writing valid memory."},
+{s:"Pointers",q:"What is a pointer? What does it store?",a:"A pointer is a variable that stores a memory address. It also encodes the type of the object at that address so the compiler knows how many bytes to read/write and how to perform pointer arithmetic."},
+{s:"Pointers",q:"What is the difference between the address-of operator (&) and the dereference operator (*)?",a:"&x — 'address of x' — yields a pointer to x.\n*p — 'dereference p' — accesses the object at the address p holds."},
+{s:"Pointers",q:"What is pointer arithmetic? If p is an int* pointing to arr[0], what does (p + 3) evaluate to?",a:"Adding n to a pointer p gives: (char*)p + n * sizeof(*p).\nFor int *p = &arr[0], (p + 3) points to arr[3] — 12 bytes further on a 4-byte-int system."},
+{s:"Pointers",q:"What is the size of a pointer on 32-bit vs 64-bit? Does the pointed-to type affect it?",a:"32-bit: 4 bytes.  64-bit: 8 bytes.\nThe pointed-to type does NOT affect pointer size. int*, char*, void* are all 8 bytes on x86-64."},
+{s:"Pointers",q:"What is a NULL pointer? What happens when you dereference one?",a:"NULL is a pointer guaranteed to point to no valid object (typically (void*)0). Dereferencing NULL is undefined behavior. On most systems it causes an immediate segfault because address 0 is not mapped."},
+{s:"Pointers",q:"What is a wild (uninitialized) pointer? Why is it dangerous?",a:"A pointer declared but never initialized. It holds garbage. Reading or writing through it is UB and can corrupt arbitrary memory or crash."},
+{s:"Pointers",q:"What is a dangling pointer? Give two ways one can be created.",a:"A pointer that refers to freed or out-of-scope memory.\n1. free(p) — p still holds the old address; accessing it is UB.\n2. Returning a pointer to a local variable — the stack frame is gone on return."},
+{s:"Pointers",q:"Explain the four const pointer variations:\nint *p;\nint * const p;\nconst int *p;\nconst int * const p;",a:"int *p            — mutable pointer to mutable int.\nint * const p     — CONST pointer (can't reassign p), but *p can change.\nconst int *p      — pointer to CONST int (can't modify *p), p is reassignable.\nconst int * const p — CONST pointer to CONST int; neither can change."},
+{s:"Pointers",q:"What is void*? Can you dereference it? Can you do pointer arithmetic on it?",a:"void* is a generic pointer that holds any address.\nCannot dereference (type unknown).\nCannot do arithmetic in standard C (size unknown); GCC allows it as an extension.\nCast to a concrete type first."},
+{s:"Pointers",q:"Write the declaration for a pointer to a function that takes an int and a double and returns a char*.",a:"char* (*fp)(int, double);\n\nTo call:   char *r = fp(42, 3.14);\nTo assign: fp = some_function;"},
+{s:"Pointers",q:"What is double indirection (int**)? Give a real use case.",a:"int** is a pointer to a pointer to an int.\nUse case 1: modifying a pointer from a callee:\n  void alloc(int **pp) { *pp = malloc(sizeof(int)); }\nUse case 2: 2D arrays as arrays of row pointers:\n  int **matrix = malloc(rows * sizeof(int*));"},
+{s:"Pointers",q:"What is the relationship between arrays and pointers in C? Are they the same thing?",a:"NOT the same, but related. An array name DECAYS to a pointer to its first element in most expressions.\nDifferences:\n- sizeof(arr) = full array size; sizeof(ptr) = pointer size.\n- &arr and &arr[0] have different types.\n- You cannot assign to an array name."},
+{s:"Pointers",q:"What does sizeof return for a local array vs a pointer to that array?",a:"int arr[10]; int *p = arr;\nsizeof(arr) = 40  (10 * sizeof(int))\nsizeof(p)   =  8  (pointer size on 64-bit)\n\nOnce passed to a function, array decays — sizeof gives pointer size inside the function."},
+{s:"Pointers",q:"What is the strict aliasing rule? Give an example that violates it.",a:"Compilers may assume pointers of different types don't alias (except char*). Violation:\n\n  float f = 3.14f;\n  int *ip = (int *)&f;\n  printf(\"%d\", *ip);  // UB\n\nFix: use memcpy() or a union for type punning."},
+{s:"Pointers",q:"What is the restrict keyword?",a:"restrict tells the compiler that for the pointer's lifetime, only this pointer (or values derived from it) will access the pointed-to object. Allows aggressive optimization (e.g. in memcpy). The programmer guarantees this; violating it is UB."},
+{s:"Pointers",q:"Explain the difference between: p++, ++p, (*p)++, *p++",a:"p++    — post-increment pointer; evaluates to OLD p, then increments p.\n++p    — pre-increment; increments p, evaluates to NEW p.\n(*p)++ — dereference p, post-increment the VALUE at *p; pointer unchanged.\n*p++   — *(p++): reads *p at old address, then increments p."},
+{s:"Pointers",q:"How do you pass a 4x5 int array to a function? Write the correct signature.",a:"void func(int arr[][5], int rows);    // preferred\nvoid func(int (*arr)[5], int rows);   // equivalent\n\nThe second dimension MUST be specified so the compiler knows the stride."},
+{s:"Pointers",q:"What is an opaque pointer? Where is it commonly used in C APIs?",a:"A pointer to an incomplete type — the struct is declared but its members are hidden from API users.\n\n// header:\ntypedef struct Engine_ Engine;\nEngine* engine_create(void);\nvoid    engine_destroy(Engine*);\n\nEnforces encapsulation and ABI stability in C."},
+{s:"Strings",q:"How are C strings represented in memory?",a:"A C string is a contiguous sequence of char values terminated by a null byte ('\\0', value 0). Functions find the end by scanning for this terminator. There is no stored length field."},
+{s:"Strings",q:"What is the difference between:\nchar str[] = \"hello\";\nchar *str  = \"hello\";",a:"char str[] = \"hello\":\n  6-char array on the stack (copy of literal). str[0] = 'H' is legal.\n\nchar *str = \"hello\":\n  Points to string literal in read-only memory. Writing to it is UB. Declare as const char* for safety."},
+{s:"Strings",q:"Can you modify a string literal? What happens if you try?",a:"No. String literals are in the read-only data segment. Writing through a pointer to one is UB. On most modern OSes it causes a segfault."},
+{s:"Strings",q:"What does strlen(\"hello\") return? What does sizeof(\"hello\") return? Why different?",a:"strlen(\"hello\") = 5  (chars up to but NOT including '\\0')\nsizeof(\"hello\") = 6  (size of array INCLUDING the '\\0')\n\nstrlen() is a runtime scan. sizeof() is a compile-time operator."},
+{s:"Strings",q:"What is the danger with strcpy()? What should you use instead?",a:"strcpy(dest, src) copies with no bounds check — classic buffer overflow.\n\nSafe alternatives:\n  strlcpy(dest, src, sizeof(dest))\n  snprintf(dest, sizeof(dest), \"%s\", src)"},
+{s:"Strings",q:"What is the danger with strcat()? What is the safe alternative?",a:"strcat appends without knowing dest's capacity. Also O(n) per call (scans to end of dest each time).\n\nSafe: strlcat(dest, src, sizeof(dest))"},
+{s:"Strings",q:"What does strcmp() return when strings are equal? When s1 < s2? When s1 > s2?",a:"0    — strings are equal.\n< 0  — s1 < s2 (first differing char in s1 has lower value).\n> 0  — s1 > s2.\n\nNote: does NOT return exactly -1/0/1."},
+{s:"Strings",q:"What does strncpy() do if src is shorter than n? Longer than n? What critical issue?",a:"Shorter: pads dest with '\\0' bytes up to n chars.\nLonger: copies exactly n bytes and does NOT null-terminate dest.\n\nCritical: dest may not be null-terminated. Always add:\n  dest[n-1] = '\\0';"},
+{s:"Strings",q:"What is strtok()? Why is it not re-entrant? What is the thread-safe alternative?",a:"strtok(str, delim) splits a string by delimiter. Stores state in a STATIC internal pointer — not re-entrant, not thread-safe.\n\nThread-safe: strtok_r(str, delim, &saveptr)  [POSIX]"},
+{s:"Strings",q:"What is the difference between sprintf() and snprintf()?",a:"sprintf(buf, fmt, ...)     — no bounds check; can overflow buf.\nsnprintf(buf, n, fmt, ...) — writes at most n-1 chars + '\\0'. Safe.\n\nReturn value: chars that WOULD have been written. If ret >= n, output was truncated. Always use snprintf."},
+{s:"Strings",q:"How does atoi() differ from strtol()? When should you prefer strtol()?",a:"atoi: no error detection, UB on overflow.\n\nstrtol(s, &endptr, base):\n  - endptr points to first non-numeric char\n  - Sets errno = ERANGE on overflow\n  - Returns LONG_MIN/MAX on overflow\n\nAlways prefer strtol."},
+{s:"Strings",q:"What does memcpy() do vs memmove()? When must you use memmove()?",a:"memcpy(dst, src, n)  — copies n bytes. UB if src and dst overlap.\nmemmove(dst, src, n) — copies correctly even when src and dst overlap.\n\nUse memmove whenever source and destination might overlap."},
+{s:"Strings",q:"Write a function to reverse a string in-place in C.",a:"void reverse(char *s) {\n    int left = 0, right = (int)strlen(s) - 1;\n    while (left < right) {\n        char tmp = s[left];\n        s[left]  = s[right];\n        s[right] = tmp;\n        left++; right--;\n    }\n}"},
+{s:"Strings",q:"What is a buffer overflow in the context of strings?",a:"Writes past the end of a fixed-size buffer:\n\n  char buf[8];\n  strcpy(buf, \"this string is way too long\");\n  // Overwrites stack: saved registers, return address\n  // Classic stack smash — can hijack control flow"},
+{s:"Strings",q:"What does strdup() do? Who is responsible for freeing the returned memory?",a:"strdup(s) allocates a new string on the heap with malloc(), copies s into it, and returns the pointer.\n\nThe CALLER is responsible for calling free() on the returned pointer."},
+{s:"Memory Functions",q:"What are the signatures of malloc(), calloc(), realloc(), and free()?",a:"void *malloc (size_t size);\nvoid *calloc (size_t nmemb, size_t size);\nvoid *realloc(void *ptr, size_t size);\nvoid  free   (void *ptr);"},
+{s:"Memory Functions",q:"What is the difference between malloc() and calloc()?",a:"malloc(n)    — allocates n bytes; contents are UNINITIALIZED (garbage).\ncalloc(n, s) — allocates n*s bytes and ZERO-INITIALIZES them.\n\ncalloc also handles the n*s multiplication safely against overflow."},
+{s:"Memory Functions",q:"What does realloc() do when passed NULL? When passed size 0?",a:"realloc(NULL, size) = equivalent to malloc(size).\nrealloc(ptr, 0)    = implementation-defined in C11; may free ptr and return NULL. Avoid it — explicitly call free(ptr) instead."},
+{s:"Memory Functions",q:"What happens if malloc() fails? How should you always handle it?",a:"malloc returns NULL on failure. Always check:\n\n  int *p = malloc(sizeof(int) * n);\n  if (!p) {\n      perror(\"malloc\");\n      exit(EXIT_FAILURE);\n  }"},
+{s:"Memory Functions",q:"What is a memory leak? How does Valgrind detect one?",a:"Heap memory allocated but never freed, remaining inaccessible for the program's lifetime.\n\nValgrind's Memcheck tracks every malloc/free pair. At exit it reports blocks allocated but never freed, including the allocation call stack."},
+{s:"Memory Functions",q:"What is a double free? What are its consequences?",a:"Calling free(p) twice on the same pointer is UB. In practice:\n- Corrupts the heap's internal free-list.\n- Can crash immediately or cause silent heap corruption.\n- Can be exploited as a security vulnerability.\n\nFix: set p = NULL after free."},
+{s:"Memory Functions",q:"What is heap fragmentation? Internal vs external fragmentation?",a:"Internal fragmentation: allocator gives you more bytes than requested (alignment/rounding). Extra bytes wasted inside the block.\n\nExternal fragmentation: free memory scattered in small non-contiguous chunks. No single contiguous block large enough for an allocation."},
+{s:"Memory Functions",q:"What does free() do with the pointer itself? Is it set to NULL automatically?",a:"free(p) releases the heap block back to the allocator. It does NOT modify p itself — p still holds the old address (dangling pointer).\n\nYou must manually set p = NULL to avoid use-after-free."},
+{s:"Memory Functions",q:"Is it safe to call free(NULL)?",a:"Yes. Calling free(NULL) is explicitly defined by the C standard as a no-op. It does nothing and is always safe."},
+{s:"Memory Functions",q:"What is alloca()? How does it differ from malloc()? What are its risks?",a:"alloca(n) allocates n bytes on the STACK by adjusting the stack pointer. Released automatically when function returns — no free() needed.\n\nRisks: can overflow the stack for large n (no check). Non-standard (POSIX). UB if memory used after function returns."},
+{s:"Memory Functions",q:"What is an alignment requirement? What happens with misaligned access?",a:"Alignment: requirement that an object's address be a multiple of some value.\n\nx86: misaligned access is allowed but slower.\nARM/SPARC/MIPS: may cause a hardware trap / SIGBUS.\nSIMD (SSE/AVX): causes a fault even on x86.\n\nmalloc() guarantees alignment for any fundamental type."},
+{s:"Memory Functions",q:"What does memset() do? Write a call to zero out a 100-byte buffer.",a:"memset(ptr, value, n) sets n bytes starting at ptr to (value & 0xFF).\n\n  char buf[100];\n  memset(buf, 0, sizeof(buf));\n\nNote: memset(arr, 1, n*sizeof(int)) does NOT set ints to 1 — it sets each BYTE to 0x01, making arr[0] = 0x01010101."},
+{s:"Memory Functions",q:"What is memory corruption vs a memory leak?",a:"Memory leak: allocated but never freed. Program still works but wastes memory.\n\nMemory corruption: memory written incorrectly (overflow, use-after-free, double free). Program's data is invalid — crashes, wrong results, or security vulnerabilities. Far more dangerous."},
+{s:"Memory Functions",q:"What is a use-after-free vulnerability? Give an example.",a:"Reading or writing memory after it has been freed:\n\n  int *p = malloc(sizeof(int));\n  *p = 42;\n  free(p);\n  printf(\"%d\", *p);  // UB\n\nAllocator may have reused this memory. Can leak sensitive data or hijack control flow."},
+{s:"Memory Functions",q:"What is the difference between memcpy() and strcpy()?",a:"memcpy(dst, src, n) — copies exactly n bytes regardless of content. Works on any data. You specify the length.\n\nstrcpy(dst, src)    — copies chars until and including '\\0'. Only for null-terminated strings; no bounds check."},
+{s:"Undefined Behavior",q:"What is undefined behavior (UB) in the C standard? Why does it exist?",a:"UB is behavior the C standard places no requirements on. The compiler may assume UB never occurs. If it does: anything can happen.\n\nUB exists to allow compiler optimizations — e.g. assuming signed overflow never happens lets the compiler generate faster code."},
+{s:"Undefined Behavior",q:"What is the difference between undefined, unspecified, and implementation-defined behavior?",a:"Undefined: no requirement whatsoever. Compiler assumes it never happens.\n\nUnspecified: standard allows multiple results but doesn't require documenting which. E.g. order of function argument evaluation.\n\nImplementation-defined: compiler must pick ONE behavior and document it. E.g. sizeof(int) == 4."},
+{s:"Undefined Behavior",q:"For each, is it UB and why?\n(a) int i = INT_MAX; i++;\n(b) unsigned u = UINT_MAX; u++;\n(c) int arr[5]; arr[5] = 10;\n(d) int *p = NULL; *p = 5;\n(e) int x; printf(\"%d\", x);\n(f) char *s = \"hi\"; s[0]='H';\n(g) int a=1; int b = a++ + a++;",a:"(a) UB — signed integer overflow.\n(b) WELL DEFINED — unsigned wraps modulo 2^N, becomes 0.\n(c) UB — out-of-bounds write.\n(d) UB — null pointer dereference.\n(e) UB — reading uninitialized variable.\n(f) UB — writing to string literal.\n(g) UB — modifying a variable twice with unsequenced side effects."},
+{s:"Undefined Behavior",q:"Why can signed integer overflow cause real-world bugs even when hardware wraps around?",a:"The compiler assumes signed overflow NEVER occurs. So:\n\n  if (x + 1 > x)  // compiler may delete this check\n\nSecurity overflow checks, loop conditions, and range guards can be silently optimized away. Real CVEs have resulted from this."},
+{s:"Undefined Behavior",q:"What is the 'as-if' rule? How does it relate to UB?",a:"The compiler may transform code in any way, as long as observable behavior (I/O, volatile accesses) is the same as if the code ran literally.\n\nUB breaks this guarantee — the compiler can do anything."},
+{s:"Undefined Behavior",q:"What is a sequence point? Give the sequence points in: f(a++, b++)",a:"A sequence point is where all previous side effects are complete and no subsequent ones have started.\n\nIn f(a++, b++):\n- Sequence point AT function entry (after all args evaluated).\n- NO sequence point BETWEEN evaluating a++ and b++.\n- Their evaluation order is unspecified."},
+{s:"Undefined Behavior",q:"Why is function argument evaluation order undefined in C?",a:"The standard leaves it unspecified to give compilers freedom to evaluate arguments in the most efficient order. Different architectures have different calling conventions; mandating an order would hurt performance."},
+{s:"Undefined Behavior",q:"What shifts are undefined behavior in C?",a:"- Shifting by a NEGATIVE amount: UB.\n- Shifting by >= the bit width of the type: UB.\n  e.g. uint32_t x; x << 32; — UB.\n- Left-shifting a NEGATIVE signed value: UB.\n- Left-shifting into the sign bit: UB in C."},
+{s:"Undefined Behavior",q:"What is a data race? Is it UB in C11?",a:"A data race occurs when:\n1. Two threads access the same memory location concurrently.\n2. At least one access is a write.\n3. The accesses are not synchronized.\n\nYes — a data race is UNDEFINED BEHAVIOR in C11."},
+{s:"Undefined Behavior",q:"Name three compiler sanitizers and describe what each catches.",a:"-fsanitize=address (ASan): buffer overflows, use-after-free, double-free. ~2x slowdown.\n\n-fsanitize=undefined (UBSan): signed overflow, null deref, misaligned access, out-of-bounds indexing. Low overhead.\n\n-fsanitize=thread (TSan): data races. ~5-15x slowdown. Cannot combine with ASan."},
+{s:"Undefined Behavior",q:"What can a compiler legally do when it encounters undefined behavior?",a:"Literally anything: delete code, generate nonsense, reorder operations. Optimizers use UB as license to assume certain conditions never hold, silently deleting security checks or producing code that only misbehaves at higher optimization levels."},
+{s:"Undefined Behavior",q:"What is the strict aliasing rule and how can violating it cause real bugs?",a:"Compilers may assume pointers of incompatible types do not alias (except char*). Violation:\n\n  float f = 3.14f;\n  unsigned *p = (unsigned*)&f;\n  *p = 0;  // UB\n\nCompiler may have cached f in a float register and never flush it. Use memcpy() or a union for safe type punning."},
+{s:"Type System",q:"What are the 'usual arithmetic conversions' rules in C?",a:"1. Integer promotions first: char/short -> int (or unsigned int).\n2. If types still differ, lesser type converts to greater:\n   unsigned long long > signed long long > unsigned long > signed long > unsigned int > signed int.\n3. If one is unsigned and other is signed of the same rank, signed converts to unsigned."},
+{s:"Type System",q:"What is integer promotion?",a:"Any value of type char, short, or bit field is automatically promoted to int before use in arithmetic.\n\n  char a = 200, b = 100;\n  int c = a + b;  // promoted to int before addition; result = 300 (no overflow)"},
+{s:"Type System",q:"What is the difference between int and unsigned int overflow behavior?",a:"int overflow:           UNDEFINED BEHAVIOR.\nunsigned int overflow:  well-defined; wraps modulo 2^N (e.g. 2^32 for 32-bit unsigned)."},
+{s:"Type System",q:"What does (int)(3.9) evaluate to? What about (int)(-3.9)?",a:"(int)(3.9)  = 3   (truncates toward zero)\n(int)(-3.9) = -3  (truncates toward zero, NOT toward negative infinity)"},
+{s:"Type System",q:"What does integer division and modulo do with negative numbers in C99+?",a:"C99 mandates truncation toward zero:\n  (-7) / 2  = -3   (not -4)\n  (-7) % 2  = -1   (sign of dividend)\n  7 / (-2)  = -3\n  7 % (-2)  =  1   (sign of dividend)"},
+{s:"Type System",q:"What is the size of int guaranteed to be by the C standard? What header gives you exact-width types?",a:"The C standard only guarantees int is at least 16 bits. In practice it is 32 bits on all modern platforms.\n\nUse <stdint.h> for exact widths:\n  int8_t, int16_t, int32_t, int64_t\n  uint8_t, uint16_t, uint32_t, uint64_t"},
+{s:"Type System",q:"When should you use size_t vs int for array indexing?",a:"Use size_t (unsigned) because:\n1. Avoids signed/unsigned comparison warnings.\n2. Supports arrays > 2 GB on 64-bit systems.\n3. Matches the type returned by sizeof and used by malloc."},
+{s:"Type System",q:"What is a flexible array member? Where can it appear in a struct?",a:"An incomplete array as the LAST member of a struct (C99+):\n\n  struct Packet {\n      int len;\n      char data[];   // flexible array member\n  };\n  // Allocate: malloc(sizeof(*p) + n)\n\nCannot be the only member."},
+{s:"Type System",q:"What is the difference between enum and #define for constants?",a:"enum advantages:\n- Named type; debuggers show symbolic names.\n- Caught by -Wswitch (missing case in switch).\n\n#define advantages:\n- Can define strings and non-integer values.\n\nFor integer constants, prefer enum or const int."},
+{s:"Type System",q:"What is implicit truncation? When does it occur?",a:"Implicit truncation occurs when a value is assigned to a narrower type:\n\n  int i = 300;\n  char c = i;  // only low 8 bits kept: c = 44 (300 - 256)\n\nImplementation-defined for signed types if value out of range; for unsigned types it wraps modulo 2^N."},
+{s:"Structs & Unions",q:"What is struct padding/alignment? Why does the compiler insert it?",a:"The compiler inserts padding bytes between struct members so each member is aligned to its natural alignment. Also adds trailing padding so sizeof(struct) is a multiple of the largest member's alignment.\n\n  struct { char a; int b; char c; };\n  // a(1) + 3pad + b(4) + c(1) + 3pad = 12 bytes, not 6"},
+{s:"Structs & Unions",q:"How do you minimize struct padding?",a:"Order members from LARGEST to SMALLEST alignment:\n\n  struct Good {\n      int   b;    // 4 bytes\n      char  a;    // 1 byte\n      char  c;    // 1 byte + 2 trailing pad\n  };  // 8 bytes vs 12 with poor ordering"},
+{s:"Structs & Unions",q:"What does __attribute__((packed)) do? What are its trade-offs?",a:"Tells GCC/Clang to remove all padding.\n\nTrade-offs:\n- Smaller struct (useful for network/file formats).\n- Potential misaligned access: slower on x86, SIGBUS on ARM.\n- Pointer aliasing issues if taking address of packed member."},
+{s:"Structs & Unions",q:"What is a union? How does its memory work compared to a struct?",a:"All members of a union share the SAME memory. Union size = size of its LARGEST member.\n\n  union U { int i; float f; char c[4]; };\n  // All overlap at same address; size = 4 bytes"},
+{s:"Structs & Unions",q:"Is type punning through a union legal in C?",a:"Yes. In C (not C++), writing to one union member and reading from another is explicitly defined (C99 TC3 / C11): you get the stored bytes interpreted as the new type.\n\nmemcpy() is also always correct for type punning."},
+{s:"Structs & Unions",q:"What are bit fields? Declare a struct packing a 4-bit and 12-bit field.",a:"Bit fields specify the number of bits a member occupies:\n\n  struct Flags {\n      unsigned int nibble : 4;   // 4 bits (0-15)\n      unsigned int rest   : 12;  // 12 bits\n  };  // fits in one 16-bit storage unit\n\nLayout within storage unit is implementation-defined; cannot take address of a bit field."},
+{s:"Structs & Unions",q:"What does offsetof() do? What header is it in?",a:"offsetof(type, member) returns the byte offset of member from the start of type, as a size_t. Defined in <stddef.h>.\n\nUsed to implement container_of and to verify struct layout in serialization code."},
+{s:"Structs & Unions",q:"How do you forward-declare a struct? Why is it useful?",a:"  struct Node;   // forward declaration — incomplete type\n\nEnables pointers to the struct before its full definition is seen. Enables self-referential structs:\n\n  struct Node {\n      int data;\n      struct Node *next;  // legal: pointer only\n  };"},
+{s:"Scope & Linkage",q:"What are the four storage classes in C? What does each mean?",a:"auto    — default for locals; automatic storage duration.\nregister — hint to store in register (ignored by modern compilers).\nstatic  — static storage duration; internal linkage (file scope) or persistent local (function scope).\nextern  — declares a variable/function defined in another translation unit."},
+{s:"Scope & Linkage",q:"What is the difference between static at file scope vs inside a function?",a:"File scope: static int x; — INTERNAL LINKAGE; not visible outside this translation unit.\n\nFunction scope: static int count = 0; — STATIC STORAGE DURATION (lives for program lifetime, init once), but only visible within the function."},
+{s:"Scope & Linkage",q:"What does extern do when applied to a variable declaration?",a:"extern int x; is a DECLARATION (not a definition). Tells the compiler 'x is defined somewhere else.' The linker resolves it at link time. Typically placed in headers to expose global variables across files."},
+{s:"Scope & Linkage",q:"What is internal vs external linkage?",a:"External linkage: symbol is visible to the linker across all translation units. Default for non-static functions and globals.\n\nInternal linkage: symbol is private to the current translation unit. Achieved with static keyword at file scope."},
+{s:"Scope & Linkage",q:"Can two translation units define a static global with the same name? Why or why not?",a:"YES. static at file scope gives internal linkage, so each TU has its own private copy. The linker sees them as completely independent symbols."},
+{s:"Scope & Linkage",q:"What is a translation unit?",a:"A translation unit is a single .c file after preprocessing (includes expanded, macros substituted). The compiler processes one TU at a time to produce one object file (.o)."},
+{s:"Scope & Linkage",q:"What is the One Definition Rule (ODR) in C?",a:"A variable or function may be DECLARED multiple times (via extern in headers) but must be DEFINED exactly once across all translation units. Two definitions = linker error: 'multiple definition of symbol X'."},
+{s:"Preprocessor",q:"What is the difference between #include <file> and #include \"file\"?",a:"<file>  — searches system include directories (standard library paths).\n\"file\"  — searches the current source file's directory first, then falls back to system directories. Use for your own project headers."},
+{s:"Preprocessor",q:"What are include guards? Write one. Why are they needed?",a:"  #ifndef MY_HEADER_H\n  #define MY_HEADER_H\n\n  /* header contents */\n\n  #endif\n\nWithout guards, including a header twice causes duplicate declarations and compile errors."},
+{s:"Preprocessor",q:"Function-like macro vs inline function — two pitfalls of macros?",a:"Pitfall 1 — Double evaluation:\n  #define MAX(a,b) ((a)>(b)?(a):(b))\n  MAX(x++, y++)  — larger argument incremented TWICE!\n\nPitfall 2 — Operator precedence:\n  #define DOUBLE(x) x*2\n  DOUBLE(a+1) = a+1*2 = a+2, not (a+1)*2\n\nPrefer inline functions."},
+{s:"Preprocessor",q:"What does # do inside a macro? What does ## do?",a:"# (stringification): converts argument to a string literal.\n  #define STR(x) #x\n  STR(hello) = \"hello\"\n\n## (token pasting): joins two tokens into one.\n  #define CONCAT(a, b) a##b\n  CONCAT(my, Var) = myVar"},
+{s:"Preprocessor",q:"What is a variadic macro? Give an example.",a:"  #define LOG(fmt, ...) fprintf(stderr, fmt, __VA_ARGS__)\n  LOG(\"x=%d y=%d\\n\", x, y);\n\nC99 introduced variadic macros with __VA_ARGS__. Use ##__VA_ARGS__ (GCC/Clang) to remove the trailing comma when no variadic args are given."},
+{s:"Preprocessor",q:"What are __FILE__, __LINE__, __DATE__, and __func__?",a:"__FILE__  — string literal of the current source file name.\n__LINE__  — integer constant of the current line number.\n__DATE__  — string literal of the compile date.\n__func__  — string literal of the current function name (C99)."},
+{s:"Preprocessor",q:"What does #pragma once do? Is it standard?",a:"Tells the preprocessor to include this file only once per translation unit — same effect as an include guard. NOT in the ISO C standard but supported by GCC, Clang, and MSVC. Most style guides accept either."},
+{s:"File I/O",q:"What is the difference between text mode and binary mode when opening a file?",a:"Text mode (\"r\"/\"w\"): runtime translates newlines. On Windows, \\r\\n in file becomes \\n on read and vice versa.\n\nBinary mode (\"rb\"/\"wb\"): no translation. Always use binary mode for non-text data to avoid corruption."},
+{s:"File I/O",q:"What does fopen() return on failure? How should you handle it?",a:"Returns NULL. Always check:\n\n  FILE *f = fopen(\"file.txt\", \"r\");\n  if (!f) {\n      perror(\"file.txt\");\n      return;\n  }"},
+{s:"File I/O",q:"What is the difference between fgets() and gets()? Why is gets() banned?",a:"gets(buf): reads with NO length limit. REMOVED from C11. Buffer overflow guaranteed on long input.\n\nfgets(buf, n, stream): reads at most n-1 chars plus newline plus null terminator. Safe.\n\nNever use gets()."},
+{s:"File I/O",q:"What do fseek(), ftell(), and rewind() do?",a:"fseek(fp, offset, whence) — moves file position indicator.\n  SEEK_SET (from start), SEEK_CUR (from current), SEEK_END (from end).\n\nftell(fp) — returns current position as long. Returns -1L on error.\n\nrewind(fp) — fseek(fp, 0, SEEK_SET) + clears error indicator."},
+{s:"File I/O",q:"What is the difference between fread/fwrite and fscanf/fprintf?",a:"fread/fwrite: raw binary I/O; read/write n items of size s bytes. Fast, no formatting. Good for structs and binary data.\n\nfscanf/fprintf: formatted text I/O; parse/emit human-readable text. Slower due to formatting overhead."},
+{s:"File I/O",q:"What does fflush() do? What is undefined behavior with fflush()?",a:"fflush(fp) flushes the user-space I/O buffer to the OS. Commonly used after printf to ensure output appears before blocking.\n\nfflush() on an INPUT stream is UNDEFINED BEHAVIOR."},
+{s:"Concurrency",q:"Write the basic pthreads pattern for using a mutex around a critical section.",a:"  pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;\n\n  void *thread_func(void *arg) {\n      pthread_mutex_lock(&lock);\n      // critical section\n      shared_counter++;\n      pthread_mutex_unlock(&lock);\n      return NULL;\n  }"},
+{s:"Concurrency",q:"Give a minimal race condition example in C.",a:"  // Thread 1          // Thread 2\n  int x = counter;    int x = counter;  // both read 5\n  x++;                x++;              // both compute 6\n  counter = x;        counter = x;      // both write 6 — lost an increment\n\n  Result: counter = 6, not 7."},
+{s:"Concurrency",q:"What are C11 atomic types (_Atomic)? What problem do they solve?",a:"  _Atomic int counter = 0;\n  atomic_fetch_add(&counter, 1);  // atomic increment\n\n_Atomic variables guarantee reads/writes are indivisible (no torn reads) and impose memory ordering constraints. Solve data races without a mutex for simple operations."},
+{s:"Concurrency",q:"What is the difference between a spinlock and a mutex?",a:"Mutex: if unavailable, thread is put to SLEEP by the OS (context switch). Efficient when contention causes long waits.\n\nSpinlock: if unavailable, thread busy-waits (spins). No context switch overhead; efficient for very short critical sections on multi-core."},
+{s:"Concurrency",q:"What is a deadlock? Give the four Coffman conditions.",a:"Deadlock: threads stuck waiting for each other forever.\n\nFour Coffman conditions (ALL must hold):\n1. Mutual exclusion — resource held exclusively.\n2. Hold and wait — holds a resource while waiting for another.\n3. No preemption — resources can't be forcibly taken.\n4. Circular wait — circular chain, each waiting for the next's resource.\n\nBreaking any one condition prevents deadlock."},
+{s:"Compilation",q:"What are the four stages of C compilation? Describe each.",a:"1. Preprocessing (cpp)  — expands #include, #define, #if. Output: .i file.\n2. Compilation   (cc1)  — translates C to assembly. Output: .s file.\n3. Assembly      (as)   — assembles to machine code. Output: .o file.\n4. Linking       (ld)   — resolves symbols, combines .o files and libraries into an executable."},
+{s:"Compilation",q:"What is the difference between a declaration and a definition in C?",a:"Declaration: introduces a name and type to the compiler.\n  extern int x;          // declaration\n  int foo(int, double);  // prototype\n\nDefinition: allocates storage or provides a body.\n  int x = 5;            // definition\n  int foo(int a, double b) { return a; }  // definition"},
+{s:"Compilation",q:"What is the difference between static linking and dynamic linking?",a:"Static: all library code copied into executable at link time. Self-contained, larger binary. No runtime dependency.\n\nDynamic: executable records which shared libraries (.so/.dll) it needs; OS loads them at runtime. Smaller executables; easier to update library without recompiling."},
+{s:"Compilation",q:"What does the volatile keyword tell the compiler? Give two use cases.",a:"volatile tells the compiler the variable may change outside normal program flow. Must not cache it in a register; must emit an actual memory access each time.\n\nUse cases:\n1. Memory-mapped hardware registers.\n2. Variables modified by signal handlers.\n\nvolatile does NOT imply atomicity or memory ordering."},
+{s:"Compilation",q:"What flags enable extra warnings in GCC/Clang? Why are they important?",a:"-Wall       — enables most common warnings.\n-Wextra     — additional warnings not in -Wall.\n-Wpedantic  — strict ISO C compliance warnings.\n-Werror     — treat warnings as errors.\n\nWarnings catch bugs, UB, and portability issues the standard doesn't require the compiler to catch."},
+{s:"Compilation",q:"What does a symbol table in an object file contain?",a:"The symbol table lists:\n- Defined symbols: functions and globals defined in this .o file.\n- Undefined symbols: references to things defined elsewhere.\n\nThe linker uses these tables to connect call sites with definitions across all .o files and libraries."},
+{s:"Compilation",q:"What do GCC optimization levels -O0, -O1, -O2, and -O3 do?",a:"-O0 — no optimization; fast compile, easy to debug.\n-O1 — basic optimizations (dead code elimination, some inlining).\n-O2 — full standard optimizations (vectorization, loop unrolling); typical for production.\n-O3 — aggressive; may increase code size; can obscure latent UB by exploiting it more aggressively."},
+{s:"C Patterns",q:"Write a generic swap macro that works for any type.",a:"  #define SWAP(type, a, b) \\\n      do { type _tmp = (a); (a) = (b); (b) = _tmp; } while (0)\n\n  // Usage:\n  SWAP(int, x, y);\n  SWAP(double, a, b);\n\nThe do-while(0) wrapper makes it a single statement, safe in if-else without braces."},
+{s:"C Patterns",q:"Implement a singly linked list insert_front and delete_val in C.",a:"typedef struct Node { int data; struct Node *next; } Node;\n\nNode* insert_front(Node *head, int val) {\n    Node *n = malloc(sizeof(Node));\n    if (!n) { perror(\"malloc\"); exit(1); }\n    n->data = val; n->next = head;\n    return n;\n}\n\nNode* delete_val(Node *head, int val) {\n    Node **cur = &head;\n    while (*cur) {\n        if ((*cur)->data == val) {\n            Node *tmp = *cur;\n            *cur = tmp->next;\n            free(tmp); return head;\n        }\n        cur = &(*cur)->next;\n    }\n    return head;\n}"},
+{s:"C Patterns",q:"What is the opaque pointer (handle) pattern? Why use it?",a:"Expose only a pointer to an incomplete type:\n\n  // Header (public API):\n  typedef struct Engine_ Engine;\n  Engine* engine_create(void);\n  void    engine_destroy(Engine*);\n\n  // .c file only: full struct definition hidden.\n\nBenefits: enforces encapsulation, enables ABI stability (struct can change without recompiling users)."},
+{s:"C Patterns",q:"Implement a safe dynamic array (vector) push operation in C.",a:"void vec_push(Vec *v, int val) {\n    if (v->size == v->capacity) {\n        size_t new_cap = v->capacity ? v->capacity * 2 : 4;\n        int *tmp = realloc(v->buf, new_cap * sizeof(int));\n        if (!tmp) { perror(\"realloc\"); exit(1); }\n        v->buf = tmp;\n        v->capacity = new_cap;\n    }\n    v->buf[v->size++] = val;\n}"},
+{s:"C Patterns",q:"What is the container_of macro? How does it work?",a:"  #define container_of(ptr, type, member) \\\n      ((type *)((char *)(ptr) - offsetof(type, member)))\n\nGiven a pointer to a struct member, recovers the pointer to the containing struct.\n\n  struct Task { int id; struct ListNode list; };\n  struct ListNode *node = get_next();\n  struct Task *t = container_of(node, struct Task, list);\n\nUsed extensively in the Linux kernel."},
+{s:"C Patterns",q:"Write a portable safe integer addition function that detects overflow.",a:"  // GCC/Clang built-in:\n  bool safe_add(int a, int b, int *result) {\n      return !__builtin_sadd_overflow(a, b, result);\n  }\n\n  // Portable:\n  bool safe_add_portable(int a, int b, int *result) {\n      if ((b > 0 && a > INT_MAX - b) ||\n          (b < 0 && a < INT_MIN - b))\n          return false;\n      *result = a + b;\n      return true;\n  }"},
+{s:"C Patterns",q:"What are X-macros? Give a simple example.",a:"X-macros generate repetitive code from one list:\n\n  #define COLOR_LIST \\\n      X(RED,   0) \\\n      X(GREEN, 1) \\\n      X(BLUE,  2)\n\n  typedef enum {\n  #define X(name, val) name = val,\n      COLOR_LIST\n  #undef X\n  } Color;\n\nAdd a new entry in ONE place; all generated code updates automatically."},
+{s:"C Patterns",q:"What is a table-driven state machine in C? Show the key structure.",a:"  typedef State (*Handler)(Event);\n\n  static Handler table[NUM_STATES][NUM_EVENTS] = {\n      [STATE_IDLE][EVENT_START]   = handle_start,\n      [STATE_RUNNING][EVENT_STOP] = handle_stop,\n  };\n\n  State current = STATE_IDLE;\n  Event e = get_event();\n  Handler h = table[current][e];\n  if (h) current = h(e);\n\nDesignated initializers make the table self-documenting."}
+];
+
+let deck=[],idx=0,flipped=false,got=0,missed=0,section='all',missedCards=[];
+
+function filterSection(){
+  section=document.getElementById('sectionSel').value;
+  deck=ALL_CARDS.filter(c=>section==='all'||c.s===section);
+  resetDeck(false);
+}
+
+function shuffle(){
+  for(let i=deck.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [deck[i],deck[j]]=[deck[j],deck[i]];
+  }
+  idx=0;got=0;missed=0;missedCards=[];flipped=false;render();
+}
+
+function resetDeck(doFilter=true){
+  if(doFilter)deck=ALL_CARDS.filter(c=>section==='all'||c.s===section);
+  idx=0;got=0;missed=0;missedCards=[];flipped=false;
+  document.getElementById('doneBanner').style.display='none';
+  document.getElementById('cardScene').classList.remove('hidden');
+  document.getElementById('verdictRow').classList.add('btn-hidden');
+  document.getElementById('navRow').classList.remove('hidden');
+  document.getElementById('cardInner').classList.remove('flipped');
+  render();
+}
+
+function reviewMissed(){
+  if(!missedCards.length)return;
+  deck=[...missedCards];
+  idx=0;got=0;missed=0;missedCards=[];flipped=false;
+  document.getElementById('doneBanner').style.display='none';
+  document.getElementById('cardScene').classList.remove('hidden');
+  document.getElementById('verdictRow').classList.add('btn-hidden');
+  document.getElementById('navRow').classList.remove('hidden');
+  document.getElementById('cardInner').classList.remove('flipped');
+  render();
+}
+
+function flipCard(){
+  if(idx>=deck.length)return;
+  flipped=!flipped;
+  document.getElementById('cardInner').classList.toggle('flipped',flipped);
+  const vr=document.getElementById('verdictRow');
+  if(flipped)vr.classList.remove('btn-hidden');
+  else vr.classList.add('btn-hidden');
+}
+
+function verdict(wasGot){
+  if(!flipped)return;
+  if(wasGot)got++;
+  else{missed++;missedCards.push(deck[idx]);}
+  idx++;flipped=false;
+  document.getElementById('cardInner').classList.remove('flipped');
+  document.getElementById('verdictRow').classList.add('btn-hidden');
+  if(idx>=deck.length)showDone();
+  else render();
+}
+
+function prevCard(){
+  if(idx>0){idx--;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('btn-hidden');render();}
+}
+function nextCard(){
+  if(idx<deck.length-1){idx++;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('btn-hidden');render();}
+}
+
+function render(){
+  if(!deck.length)return;
+  const c=deck[Math.min(idx,deck.length-1)];
+  document.getElementById('frontQ').textContent=c.q;
+  document.getElementById('backA').innerHTML=formatAnswer(c.a);
+  document.getElementById('sectionPill').textContent=c.s;
+  document.getElementById('cardCounter').textContent='Card '+(idx+1)+' of '+deck.length;
+  const done=got+missed;
+  document.getElementById('sTotal').textContent=deck.length;
+  document.getElementById('sGot').textContent=got;
+  document.getElementById('sMiss').textContent=missed;
+  document.getElementById('sLeft').textContent=deck.length-done;
+  const pct=deck.length?Math.round(done/deck.length*100):0;
+  document.getElementById('progressFill').style.width=pct+'%';
+}
+
+function formatAnswer(a){
+  const esc=a.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const parts=esc.split('\n');
+  let out='',inCode=false,codeBuf='';
+  for(const line of parts){
+    const isCode=/^  /.test(line)&&line.trim().length>0;
+    if(isCode){inCode=true;codeBuf+=(codeBuf?'\n':'')+line.trim();}
+    else{
+      if(inCode){out+='<pre>'+codeBuf+'</pre>';codeBuf='';inCode=false;}
+      out+=(out&&!out.endsWith('</pre>'))? '<br>'+line : line;
+    }
+  }
+  if(inCode)out+='<pre>'+codeBuf+'</pre>';
+  return out;
+}
+
+function showDone(){
+  document.getElementById('cardScene').classList.add('hidden');
+  document.getElementById('verdictRow').classList.add('btn-hidden');
+  document.getElementById('navRow').classList.add('hidden');
+  const banner=document.getElementById('doneBanner');
+  banner.style.display='block';
+  const pct=deck.length?Math.round(got/deck.length*100):0;
+  document.getElementById('doneStats').textContent='You got '+got+' of '+deck.length+' correct ('+pct+'%). '+missed+' cards marked for review.';
+  document.getElementById('reviewMissedBtn').style.display=missed>0?'inline-block':'none';
+}
+
+filterSection();
+</script>
+</body>
+</html>

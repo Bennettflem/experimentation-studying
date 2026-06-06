@@ -183,7 +183,7 @@
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     border-radius: var(--radius);
-    padding: 18px 18px 52px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -213,15 +213,7 @@
     white-space: pre-wrap;
     flex: 1;
   }
-  .card-a {
-    font-size: clamp(12px, 3vw, 14px);
-    color: var(--text);
-    line-height: 1.65;
-    flex: 1;
-    overflow-y: auto;
-    max-height: 55vh;
-    -webkit-overflow-scrolling: touch;
-  }
+
   .card-a pre {
     font-family: var(--mono);
     font-size: clamp(10px, 2.5vw, 12px);
@@ -234,23 +226,28 @@
     word-break: break-word;
     overflow-x: auto;
   }
-  .flip-hint {
-    position: absolute;
-    bottom: 14px;
-    right: 16px;
-    font-size: 11px;
-    color: var(--muted);
+
+  /* ── Sticky footer (verdict + nav always visible) ── */
+  .footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 10px 16px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     display: flex;
-    align-items: center;
-    gap: 4px;
-    pointer-events: none;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
   }
 
   /* ── Action buttons ── */
   .actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 8px;
   }
   .btn {
     border-radius: var(--radius-sm);
@@ -276,13 +273,14 @@
     border-color: var(--red);
     color: var(--red);
   }
-  .btn-hidden { visibility: hidden; pointer-events: none; }
+  /* hide verdict row but keep nav visible */
+  .actions.verdict-hidden { display: none; }
 
   /* ── Nav ── */
   .nav {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 8px;
   }
   .btn-nav {
     background: var(--surface);
@@ -321,8 +319,56 @@
   }
   .done-banner .btn-restart:active { opacity: .8; }
 
+  /* ── Card answer area: scrollable, capped so footer always shows ── */
+  .card-a {
+    font-size: clamp(12px, 3vw, 14px);
+    color: var(--text);
+    line-height: 1.65;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   /* ── Hide card when done ── */
-  .card-scene.hidden, .actions.hidden, .nav.hidden { display: none; }
+  .card-scene.hidden { display: none; }
+  .footer.hidden { display: none; }
+  /* ── Saved cards notification bar ── */
+  .saved-bar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px;
+    background: rgba(247,185,85,0.08);
+    border-bottom: 1px solid rgba(247,185,85,0.2);
+    gap: 8px;
+  }
+  .saved-bar.visible { display: flex; }
+  #savedPill {
+    background: rgba(247,185,85,0.15);
+    color: var(--amber);
+    border: 1px solid rgba(247,185,85,0.35);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  #savedPill:active { opacity: .75; }
+  .saved-clear {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 6px;
+    white-space: nowrap;
+  }
+  .saved-clear:active { color: var(--red); }
+  .btn-saved {
+    background: rgba(247,185,85,0.1) !important;
+    border-color: var(--amber) !important;
+    color: var(--amber) !important;
+  }
 </style>
 </head>
 <body>
@@ -352,6 +398,11 @@
       <button class="icon-btn" onclick="resetDeck()" title="Restart">&#x25B6;</button>
     </div>
   </div>
+  <!-- Saved cards notification bar — hidden when empty -->
+  <div class="saved-bar" id="savedBar">
+    <span id="savedPill" style="display:none" onclick="reviewSaved()"></span>
+    <button class="saved-clear" onclick="clearSavedCards()">&#x2715; clear saved</button>
+  </div>
 
   <!-- Stats -->
   <div class="stats-bar">
@@ -362,7 +413,7 @@
   </div>
   <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
 
-  <!-- Main -->
+  <!-- Main scrollable area -->
   <div class="main">
 
     <!-- Card meta -->
@@ -371,43 +422,44 @@
       <span class="section-pill" id="sectionPill"></span>
     </div>
 
-    <!-- Flashcard -->
+    <!-- Flashcard — tap anywhere on card to flip -->
     <div class="card-scene" id="cardScene" onclick="flipCard()">
       <div class="card-inner" id="cardInner">
         <div class="card-face card-front">
-          <div class="card-label">Question</div>
+          <div class="card-label">Question &nbsp;&#x21C4; tap to flip</div>
           <div class="card-q" id="frontQ"></div>
-          <div class="flip-hint">tap to flip &#x21C4;</div>
         </div>
         <div class="card-face card-back">
-          <div class="card-label">Answer</div>
+          <div class="card-label">Answer &nbsp;&#x21C4; tap to flip</div>
           <div class="card-a" id="backA"></div>
-          <div class="flip-hint">tap to flip &#x21C4;</div>
         </div>
       </div>
     </div>
 
-    <!-- Verdict buttons (shown after flip) -->
-    <div class="actions btn-hidden" id="verdictRow">
-      <button class="btn btn-got" onclick="verdict(true)">&#x2713; Got it</button>
-      <button class="btn btn-miss" onclick="verdict(false)">&#x2715; Review again</button>
-    </div>
-
-    <!-- Nav -->
-    <div class="nav" id="navRow">
-      <button class="btn-nav" onclick="prevCard()">&#x2190; Prev</button>
-      <button class="btn-nav" onclick="nextCard()">Next &#x2192;</button>
-    </div>
-
-    <!-- Done -->
+    <!-- Done banner (replaces card when deck finished) -->
     <div class="done-banner" id="doneBanner">
       <h2>Deck complete &#x1F3C6;</h2>
       <p id="doneStats"></p>
       <button class="btn-restart" onclick="resetDeck()">Start over</button>
-      <button class="btn-restart" onclick="reviewMissed()" id="reviewMissedBtn">Review missed</button>
+      <button class="btn-restart" onclick="reviewMissed()" id="reviewMissedBtn">Review missed (this session)</button>
+      <button class="btn-restart btn-saved" onclick="reviewSaved()" id="reviewSavedDoneBtn" style="display:none">Review all saved</button>
     </div>
 
   </div><!-- .main -->
+
+  <!-- Sticky footer — always visible, never covered by card content -->
+  <div class="footer" id="footer">
+    <!-- Verdict buttons: shown only after card is flipped -->
+    <div class="actions verdict-hidden" id="verdictRow">
+      <button class="btn btn-got" onclick="verdict(true)">&#x2713;&nbsp; Got it</button>
+      <button class="btn btn-miss" onclick="verdict(false)">&#x2715;&nbsp; Review again</button>
+    </div>
+    <!-- Prev / Next nav: always visible -->
+    <div class="nav" id="navRow">
+      <button class="btn-nav" onclick="prevCard()">&#x2190; Prev</button>
+      <button class="btn-nav" onclick="nextCard()">Next &#x2192;</button>
+    </div>
+  </div><!-- .footer -->
 </div><!-- .app -->
 
 <script>
@@ -544,14 +596,58 @@ const ALL_CARDS=[
 {s:"C Patterns",q:"What is a table-driven state machine in C? Show the key structure.",a:"  typedef State (*Handler)(Event);\n\n  static Handler table[NUM_STATES][NUM_EVENTS] = {\n      [STATE_IDLE][EVENT_START]   = handle_start,\n      [STATE_RUNNING][EVENT_STOP] = handle_stop,\n  };\n\n  State current = STATE_IDLE;\n  Event e = get_event();\n  Handler h = table[current][e];\n  if (h) current = h(e);\n\nDesignated initializers make the table self-documenting."}
 ];
 
+// ── localStorage helpers ──────────────────────────────────────
+const LS_KEY = 'cflash_missed_v1';
+
+function saveMissed(cards) {
+  try {
+    // Store just the question strings as unique IDs — cards are rebuilt from ALL_CARDS on load
+    const keys = cards.map(c => c.q);
+    localStorage.setItem(LS_KEY, JSON.stringify(keys));
+  } catch(e) {}
+}
+
+function loadMissed() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return [];
+    const keys = JSON.parse(raw);
+    // Rebuild full card objects by matching question text
+    return keys.map(q => ALL_CARDS.find(c => c.q === q)).filter(Boolean);
+  } catch(e) { return []; }
+}
+
+function clearSaved() {
+  try { localStorage.removeItem(LS_KEY); } catch(e) {}
+}
+
+// ── State ─────────────────────────────────────────────────────
 let deck=[],idx=0,flipped=false,got=0,missed=0,section='all',missedCards=[];
 
+// ── Header saved-pill ─────────────────────────────────────────
+function updateSavedPill() {
+  const saved = loadMissed();
+  const pill = document.getElementById('savedPill');
+  const bar = document.getElementById('savedBar');
+  if (saved.length > 0) {
+    pill.textContent = '&#9733; ' + saved.length + ' saved — tap to review';
+    pill.innerHTML = '&#9733; ' + saved.length + ' saved &mdash; tap to review';
+    pill.style.display = 'inline-block';
+    bar.classList.add('visible');
+  } else {
+    pill.style.display = 'none';
+    bar.classList.remove('visible');
+  }
+}
+
+// ── Section filter ────────────────────────────────────────────
 function filterSection(){
   section=document.getElementById('sectionSel').value;
   deck=ALL_CARDS.filter(c=>section==='all'||c.s===section);
   resetDeck(false);
 }
 
+// ── Shuffle ───────────────────────────────────────────────────
 function shuffle(){
   for(let i=deck.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
@@ -560,56 +656,99 @@ function shuffle(){
   idx=0;got=0;missed=0;missedCards=[];flipped=false;render();
 }
 
+// ── Reset ─────────────────────────────────────────────────────
 function resetDeck(doFilter=true){
   if(doFilter)deck=ALL_CARDS.filter(c=>section==='all'||c.s===section);
   idx=0;got=0;missed=0;missedCards=[];flipped=false;
   document.getElementById('doneBanner').style.display='none';
   document.getElementById('cardScene').classList.remove('hidden');
-  document.getElementById('verdictRow').classList.add('btn-hidden');
-  document.getElementById('navRow').classList.remove('hidden');
+  document.getElementById('footer').classList.remove('hidden');
+  document.getElementById('verdictRow').classList.add('verdict-hidden');
   document.getElementById('cardInner').classList.remove('flipped');
   render();
 }
 
+// ── Review missed (session, from done screen) ─────────────────
 function reviewMissed(){
   if(!missedCards.length)return;
   deck=[...missedCards];
   idx=0;got=0;missed=0;missedCards=[];flipped=false;
   document.getElementById('doneBanner').style.display='none';
   document.getElementById('cardScene').classList.remove('hidden');
-  document.getElementById('verdictRow').classList.add('btn-hidden');
-  document.getElementById('navRow').classList.remove('hidden');
+  document.getElementById('footer').classList.remove('hidden');
+  document.getElementById('verdictRow').classList.add('verdict-hidden');
   document.getElementById('cardInner').classList.remove('flipped');
   render();
 }
 
+// ── Review saved (persisted across sessions) ──────────────────
+function reviewSaved(){
+  const saved = loadMissed();
+  if(!saved.length) return;
+  deck=[...saved];
+  section='all';
+  document.getElementById('sectionSel').value='all';
+  idx=0;got=0;missed=0;missedCards=[];flipped=false;
+  document.getElementById('doneBanner').style.display='none';
+  document.getElementById('cardScene').classList.remove('hidden');
+  document.getElementById('footer').classList.remove('hidden');
+  document.getElementById('verdictRow').classList.add('verdict-hidden');
+  document.getElementById('cardInner').classList.remove('flipped');
+  render();
+}
+
+// ── Clear saved cards ─────────────────────────────────────────
+function clearSavedCards(){
+  const n = loadMissed().length;
+  if(!n) return;
+  if(!confirm('Clear all ' + n + ' saved cards? This cannot be undone.')) return;
+  clearSaved();
+  updateSavedPill();
+}
+
+// ── Flip ──────────────────────────────────────────────────────
 function flipCard(){
   if(idx>=deck.length)return;
   flipped=!flipped;
   document.getElementById('cardInner').classList.toggle('flipped',flipped);
   const vr=document.getElementById('verdictRow');
-  if(flipped)vr.classList.remove('btn-hidden');
-  else vr.classList.add('btn-hidden');
+  if(flipped)vr.classList.remove('verdict-hidden');
+  else vr.classList.add('verdict-hidden');
 }
 
+// ── Verdict ───────────────────────────────────────────────────
 function verdict(wasGot){
   if(!flipped)return;
-  if(wasGot)got++;
-  else{missed++;missedCards.push(deck[idx]);}
+  if(wasGot){
+    got++;
+    // If this card was previously saved as missed, remove it now
+    const saved = loadMissed().filter(c => c.q !== deck[idx].q);
+    saveMissed(saved);
+  } else {
+    missed++;
+    missedCards.push(deck[idx]);
+    // Merge into persisted missed list (deduplicate by question)
+    const existing = loadMissed();
+    const already = existing.some(c => c.q === deck[idx].q);
+    if(!already) saveMissed([...existing, deck[idx]]);
+  }
   idx++;flipped=false;
   document.getElementById('cardInner').classList.remove('flipped');
-  document.getElementById('verdictRow').classList.add('btn-hidden');
+  document.getElementById('verdictRow').classList.add('verdict-hidden');
+  updateSavedPill();
   if(idx>=deck.length)showDone();
   else render();
 }
 
+// ── Nav ───────────────────────────────────────────────────────
 function prevCard(){
-  if(idx>0){idx--;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('btn-hidden');render();}
+  if(idx>0){idx--;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('verdict-hidden');render();}
 }
 function nextCard(){
-  if(idx<deck.length-1){idx++;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('btn-hidden');render();}
+  if(idx<deck.length-1){idx++;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('verdict-hidden');render();}
 }
 
+// ── Render ────────────────────────────────────────────────────
 function render(){
   if(!deck.length)return;
   const c=deck[Math.min(idx,deck.length-1)];
@@ -626,6 +765,7 @@ function render(){
   document.getElementById('progressFill').style.width=pct+'%';
 }
 
+// ── Format answer ─────────────────────────────────────────────
 function formatAnswer(a){
   const esc=a.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const parts=esc.split('\n');
@@ -642,17 +782,23 @@ function formatAnswer(a){
   return out;
 }
 
+// ── Done screen ───────────────────────────────────────────────
 function showDone(){
   document.getElementById('cardScene').classList.add('hidden');
-  document.getElementById('verdictRow').classList.add('btn-hidden');
-  document.getElementById('navRow').classList.add('hidden');
+  document.getElementById('footer').classList.add('hidden');
   const banner=document.getElementById('doneBanner');
   banner.style.display='block';
   const pct=deck.length?Math.round(got/deck.length*100):0;
-  document.getElementById('doneStats').textContent='You got '+got+' of '+deck.length+' correct ('+pct+'%). '+missed+' cards marked for review.';
-  document.getElementById('reviewMissedBtn').style.display=missed>0?'inline-block':'none';
+  document.getElementById('doneStats').textContent='You got '+got+' of '+deck.length+' correct ('+pct+'%). '+missed+' cards saved for review.';
+  document.getElementById('reviewMissedBtn').style.display=missedCards.length>0?'inline-block':'none';
+  const savedCount = loadMissed().length;
+  const savedBtn = document.getElementById('reviewSavedDoneBtn');
+  savedBtn.textContent = 'Review all saved ('+savedCount+')';
+  savedBtn.style.display = savedCount>0?'inline-block':'none';
 }
 
+// ── Boot ──────────────────────────────────────────────────────
+updateSavedPill();
 filterSection();
 </script>
 </body>

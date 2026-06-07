@@ -22,6 +22,8 @@
     --red: #f76f6f;
     --red-dim: rgba(247,111,111,0.12);
     --amber: #f7b955;
+    --code-accent: #c792ea;
+    --code-dim: rgba(199,146,234,0.12);
     --mono: 'Courier New', Courier, monospace;
     --radius: 14px;
     --radius-sm: 8px;
@@ -36,8 +38,6 @@
     line-height: 1.5;
     overflow-x: hidden;
   }
-
-  /* ── Layout ── */
   .app {
     min-height: 100vh;
     min-height: 100dvh;
@@ -47,8 +47,6 @@
     margin: 0 auto;
     padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
   }
-
-  /* ── Header ── */
   .header {
     padding: 14px 16px 10px;
     border-bottom: 1px solid var(--border);
@@ -62,349 +60,195 @@
     z-index: 10;
   }
   .header-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--accent);
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    white-space: nowrap;
+    font-size: 13px; font-weight: 600; color: var(--accent);
+    letter-spacing: .04em; text-transform: uppercase; white-space: nowrap;
   }
   .header select {
-    flex: 1;
-    min-width: 0;
-    background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius-sm);
-    padding: 7px 10px;
-    font-size: 13px;
-    appearance: none;
-    -webkit-appearance: none;
+    flex: 1; min-width: 0;
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    padding: 7px 10px; font-size: 13px;
+    appearance: none; -webkit-appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a8099' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 28px;
-    cursor: pointer;
+    background-repeat: no-repeat; background-position: right 10px center;
+    padding-right: 28px; cursor: pointer;
   }
+  .header select option[disabled] { color: var(--muted); font-style: italic; font-size: 11px; }
   .header-btns { display: flex; gap: 6px; }
   .icon-btn {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    border-radius: var(--radius-sm);
-    width: 36px; height: 36px;
+    background: var(--surface); border: 1px solid var(--border2); color: var(--muted);
+    border-radius: var(--radius-sm); width: 36px; height: 36px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 16px; cursor: pointer;
-    transition: color .15s, background .15s;
-    flex-shrink: 0;
+    font-size: 16px; cursor: pointer; flex-shrink: 0;
   }
   .icon-btn:active { background: var(--surface2); color: var(--text); }
-
-  /* ── Stats bar ── */
+  .saved-bar {
+    display: none; align-items: center; justify-content: space-between;
+    padding: 6px 16px; background: rgba(247,185,85,0.08);
+    border-bottom: 1px solid rgba(247,185,85,0.2); gap: 8px;
+  }
+  .saved-bar.visible { display: flex; }
+  #savedPill {
+    background: rgba(247,185,85,0.15); color: var(--amber);
+    border: 1px solid rgba(247,185,85,0.35); border-radius: 20px;
+    padding: 4px 12px; font-size: 12px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+  }
+  #savedPill:active { opacity: .75; }
+  .saved-clear {
+    background: none; border: none; color: var(--muted);
+    font-size: 12px; cursor: pointer; padding: 4px 6px; white-space: nowrap;
+  }
+  .saved-clear:active { color: var(--red); }
   .stats-bar {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
+    display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface);
   }
-  .stat {
-    flex: 1;
-    padding: 8px 4px;
-    text-align: center;
-    border-right: 1px solid var(--border);
-  }
+  .stat { flex: 1; padding: 8px 4px; text-align: center; border-right: 1px solid var(--border); }
   .stat:last-child { border-right: none; }
   .stat-num { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1; }
   .stat-num.green { color: var(--green); }
   .stat-num.red { color: var(--red); }
   .stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
-
-  /* ── Progress ── */
-  .progress-wrap {
-    height: 3px;
-    background: var(--surface2);
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    transition: width .4s ease;
-  }
-
-  /* ── Main scroll area ── */
+  .progress-wrap { height: 3px; background: var(--surface2); }
+  .progress-fill { height: 100%; background: var(--accent); transition: width .4s ease; }
   .main {
-    flex: 1;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
-
-  /* ── Card counter ── */
   .card-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--muted);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: var(--muted);
   }
   .section-pill {
-    background: var(--accent-dim);
-    color: var(--accent);
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-size: 11px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 60%;
+    border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;
   }
-
-  /* ── Flashcard ── */
-  .card-scene {
-    perspective: 1000px;
-    width: 100%;
-    cursor: pointer;
-  }
+  .section-pill.concept { background: var(--accent-dim); color: var(--accent); }
+  .section-pill.code { background: var(--code-dim); color: var(--code-accent); }
+  .card-scene { perspective: 1000px; width: 100%; cursor: pointer; }
   .card-inner {
-    position: relative;
-    width: 100%;
-    min-height: 220px;
+    position: relative; width: 100%; min-height: 220px;
     transform-style: preserve-3d;
     transition: transform .42s cubic-bezier(.4,0,.2,1);
   }
   .card-inner.flipped { transform: rotateY(180deg); }
   .card-face {
-    position: absolute;
-    top: 0; left: 0; width: 100%;
-    min-height: 220px;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    border-radius: var(--radius);
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    position: absolute; top: 0; left: 0; width: 100%; min-height: 220px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: var(--radius); padding: 18px;
+    display: flex; flex-direction: column; gap: 10px;
   }
-  .card-front {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-  }
-  .card-back {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    transform: rotateY(180deg);
-  }
+  .card-front { background: var(--surface); border: 1px solid var(--border2); }
+  .card-back { background: var(--surface2); border: 1px solid var(--border2); transform: rotateY(180deg); }
   .card-label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--muted);
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--muted);
   }
   .card-front .card-label { color: var(--accent); }
+  .card-front.code-card .card-label { color: var(--code-accent); }
   .card-q {
-    font-size: clamp(14px, 3.5vw, 17px);
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.55;
-    white-space: pre-wrap;
-    flex: 1;
+    font-size: clamp(14px, 3.5vw, 17px); font-weight: 500; color: var(--text);
+    line-height: 1.55; white-space: pre-wrap; flex: 1;
   }
-
+  .card-q.code-text {
+    font-family: var(--mono); font-size: clamp(11px, 2.8vw, 13px);
+    background: var(--bg); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    line-height: 1.5; overflow-x: auto;
+  }
+  .card-a {
+    font-size: clamp(12px, 3vw, 14px); color: var(--text); line-height: 1.65;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
   .card-a pre {
-    font-family: var(--mono);
-    font-size: clamp(10px, 2.5vw, 12px);
-    background: var(--bg);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    margin: 8px 0;
-    white-space: pre-wrap;
-    word-break: break-word;
-    overflow-x: auto;
+    font-family: var(--mono); font-size: clamp(10px, 2.5vw, 12px);
+    background: var(--bg); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 10px 12px; margin: 8px 0;
+    white-space: pre-wrap; word-break: break-word; overflow-x: auto;
   }
-
-  /* ── Sticky footer (verdict + nav always visible) ── */
   .footer {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--bg);
-    border-top: 1px solid var(--border);
-    padding: 10px 16px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 10;
+    position: sticky; bottom: 0; left: 0; right: 0;
+    background: var(--bg); border-top: 1px solid var(--border);
+    padding: 10px 16px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    display: flex; flex-direction: column; gap: 8px; z-index: 10;
   }
-
-  /* ── Action buttons ── */
-  .actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .btn {
-    border-radius: var(--radius-sm);
-    padding: 13px 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    border: 1.5px solid;
-    transition: transform .1s, opacity .1s;
-    text-align: center;
-    letter-spacing: .01em;
-    -webkit-user-select: none;
-    user-select: none;
+    border-radius: var(--radius-sm); padding: 13px 10px; font-size: 14px;
+    font-weight: 600; cursor: pointer; border: 1.5px solid; text-align: center;
+    -webkit-user-select: none; user-select: none;
   }
   .btn:active { transform: scale(0.97); opacity: .85; }
-  .btn-got {
-    background: var(--green-dim);
-    border-color: var(--green);
-    color: var(--green);
-  }
-  .btn-miss {
-    background: var(--red-dim);
-    border-color: var(--red);
-    color: var(--red);
-  }
-  /* hide verdict row but keep nav visible */
+  .btn-got { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+  .btn-miss { background: var(--red-dim); border-color: var(--red); color: var(--red); }
   .actions.verdict-hidden { display: none; }
-
-  /* ── Nav ── */
-  .nav {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
+  .nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .btn-nav {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    border-radius: var(--radius-sm);
-    padding: 10px;
-    font-size: 13px;
-    cursor: pointer;
-    text-align: center;
-    transition: color .15s, background .15s;
+    background: var(--surface); border: 1px solid var(--border2); color: var(--muted);
+    border-radius: var(--radius-sm); padding: 10px; font-size: 13px;
+    cursor: pointer; text-align: center;
   }
   .btn-nav:active { background: var(--surface2); color: var(--text); }
-
-  /* ── Done banner ── */
   .done-banner {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius);
-    padding: 28px 20px;
-    text-align: center;
-    display: none;
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 28px 20px; text-align: center; display: none;
   }
   .done-banner h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
   .done-banner p { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
   .done-banner .btn-restart {
-    background: var(--accent-dim);
-    border: 1.5px solid var(--accent);
-    color: var(--accent);
-    border-radius: var(--radius-sm);
-    padding: 12px 24px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin: 4px;
+    background: var(--accent-dim); border: 1.5px solid var(--accent); color: var(--accent);
+    border-radius: var(--radius-sm); padding: 12px 24px; font-size: 14px;
+    font-weight: 600; cursor: pointer; margin: 4px;
   }
   .done-banner .btn-restart:active { opacity: .8; }
-
-  /* ── Card answer area: scrollable, capped so footer always shows ── */
-  .card-a {
-    font-size: clamp(12px, 3vw, 14px);
-    color: var(--text);
-    line-height: 1.65;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* ── Hide card when done ── */
+  .btn-saved { background: rgba(247,185,85,0.1)!important; border-color: var(--amber)!important; color: var(--amber)!important; }
   .card-scene.hidden { display: none; }
   .footer.hidden { display: none; }
-  /* ── Saved cards notification bar ── */
-  .saved-bar {
-    display: none;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 16px;
-    background: rgba(247,185,85,0.08);
-    border-bottom: 1px solid rgba(247,185,85,0.2);
-    gap: 8px;
-  }
-  .saved-bar.visible { display: flex; }
-  #savedPill {
-    background: rgba(247,185,85,0.15);
-    color: var(--amber);
-    border: 1px solid rgba(247,185,85,0.35);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  #savedPill:active { opacity: .75; }
-  .saved-clear {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 12px;
-    cursor: pointer;
-    padding: 4px 6px;
-    white-space: nowrap;
-  }
-  .saved-clear:active { color: var(--red); }
-  .btn-saved {
-    background: rgba(247,185,85,0.1) !important;
-    border-color: var(--amber) !important;
-    color: var(--amber) !important;
-  }
 </style>
 </head>
 <body>
 <div class="app">
-
-  <!-- Header -->
   <div class="header">
     <span class="header-title">Deep C</span>
     <select id="sectionSel" onchange="filterSection()">
-      <option value="all">All sections (130)</option>
+      <option value="all">All cards (200)</option>
+      <option value="__concepts__">All Concepts (130)</option>
+      <option value="__code__">All Code Samples (70)</option>
+      <option disabled>───── Concepts ─────</option>
       <option value="Memory Layout">1 — Memory Layout (12)</option>
       <option value="Pointers">2 — Pointers (18)</option>
       <option value="Strings">3 — Strings (15)</option>
       <option value="Memory Functions">4 — Memory Functions (15)</option>
       <option value="Undefined Behavior">5 — Undefined Behavior (12)</option>
       <option value="Type System">6 — Type System (10)</option>
-      <option value="Structs &amp; Unions">7 — Structs &amp; Unions (8)</option>
-      <option value="Scope &amp; Linkage">8 — Scope &amp; Linkage (7)</option>
+      <option value="Structs & Unions">7 — Structs &amp; Unions (8)</option>
+      <option value="Scope & Linkage">8 — Scope &amp; Linkage (7)</option>
       <option value="Preprocessor">9 — Preprocessor (7)</option>
       <option value="File I/O">10 — File I/O (6)</option>
       <option value="Concurrency">11 — Concurrency (5)</option>
       <option value="Compilation">12 — Compilation (7)</option>
       <option value="C Patterns">13 — C Patterns (8)</option>
+      <option disabled>───── Code Review ─────</option>
+      <option value="Code: Memory & Pointers">Memory & Pointers (10)</option>
+      <option value="Code: Strings">Strings (8)</option>
+      <option value="Code: Data Structures">Data Structures (7)</option>
+      <option value="Code: UB & Types">UB & Types (12)</option>
+      <option value="Code: File I/O">File I/O (4)</option>
+      <option value="Code: Functions">Functions (8)</option>
+      <option value="Code: Concurrency">Concurrency (3)</option>
+      <option value="Code: Macros">Macros (4)</option>
+      <option value="Code: Security">Security (5)</option>
+      <option value="Code: Tricky Patterns">Tricky Patterns (9)</option>
     </select>
     <div class="header-btns">
       <button class="icon-btn" onclick="shuffle()" title="Shuffle">&#x21BB;</button>
       <button class="icon-btn" onclick="resetDeck()" title="Restart">&#x25B6;</button>
     </div>
   </div>
-  <!-- Saved cards notification bar — hidden when empty -->
   <div class="saved-bar" id="savedBar">
     <span id="savedPill" style="display:none" onclick="reviewSaved()"></span>
     <button class="saved-clear" onclick="clearSavedCards()">&#x2715; clear saved</button>
   </div>
-
-  <!-- Stats -->
   <div class="stats-bar">
     <div class="stat"><div class="stat-num" id="sTotal">0</div><div class="stat-lbl">Total</div></div>
     <div class="stat"><div class="stat-num green" id="sGot">0</div><div class="stat-lbl">Got it</div></div>
@@ -413,30 +257,23 @@
   </div>
   <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
 
-  <!-- Main scrollable area -->
   <div class="main">
-
-    <!-- Card meta -->
     <div class="card-meta">
-      <span id="cardCounter">Card 1 of 130</span>
-      <span class="section-pill" id="sectionPill"></span>
+      <span id="cardCounter">Card 1 of 200</span>
+      <span class="section-pill concept" id="sectionPill"></span>
     </div>
-
-    <!-- Flashcard — tap anywhere on card to flip -->
     <div class="card-scene" id="cardScene" onclick="flipCard()">
       <div class="card-inner" id="cardInner">
-        <div class="card-face card-front">
-          <div class="card-label">Question &nbsp;&#x21C4; tap to flip</div>
+        <div class="card-face card-front" id="cardFront">
+          <div class="card-label" id="frontLabel">Question &#x21C4; tap to flip</div>
           <div class="card-q" id="frontQ"></div>
         </div>
         <div class="card-face card-back">
-          <div class="card-label">Answer &nbsp;&#x21C4; tap to flip</div>
+          <div class="card-label">Answer &#x21C4; tap to flip</div>
           <div class="card-a" id="backA"></div>
         </div>
       </div>
     </div>
-
-    <!-- Done banner (replaces card when deck finished) -->
     <div class="done-banner" id="doneBanner">
       <h2>Deck complete &#x1F3C6;</h2>
       <p id="doneStats"></p>
@@ -444,23 +281,19 @@
       <button class="btn-restart" onclick="reviewMissed()" id="reviewMissedBtn">Review missed (this session)</button>
       <button class="btn-restart btn-saved" onclick="reviewSaved()" id="reviewSavedDoneBtn" style="display:none">Review all saved</button>
     </div>
+  </div>
 
-  </div><!-- .main -->
-
-  <!-- Sticky footer — always visible, never covered by card content -->
   <div class="footer" id="footer">
-    <!-- Verdict buttons: shown only after card is flipped -->
     <div class="actions verdict-hidden" id="verdictRow">
       <button class="btn btn-got" onclick="verdict(true)">&#x2713;&nbsp; Got it</button>
       <button class="btn btn-miss" onclick="verdict(false)">&#x2715;&nbsp; Review again</button>
     </div>
-    <!-- Prev / Next nav: always visible -->
     <div class="nav" id="navRow">
       <button class="btn-nav" onclick="prevCard()">&#x2190; Prev</button>
       <button class="btn-nav" onclick="nextCard()">Next &#x2192;</button>
     </div>
-  </div><!-- .footer -->
-</div><!-- .app -->
+  </div>
+</div>
 
 <script>
 const ALL_CARDS=[
@@ -593,44 +426,93 @@ const ALL_CARDS=[
 {s:"C Patterns",q:"What is the container_of macro? How does it work?",a:"  #define container_of(ptr, type, member) \\\n      ((type *)((char *)(ptr) - offsetof(type, member)))\n\nGiven a pointer to a struct member, recovers the pointer to the containing struct.\n\n  struct Task { int id; struct ListNode list; };\n  struct ListNode *node = get_next();\n  struct Task *t = container_of(node, struct Task, list);\n\nUsed extensively in the Linux kernel."},
 {s:"C Patterns",q:"Write a portable safe integer addition function that detects overflow.",a:"  // GCC/Clang built-in:\n  bool safe_add(int a, int b, int *result) {\n      return !__builtin_sadd_overflow(a, b, result);\n  }\n\n  // Portable:\n  bool safe_add_portable(int a, int b, int *result) {\n      if ((b > 0 && a > INT_MAX - b) ||\n          (b < 0 && a < INT_MIN - b))\n          return false;\n      *result = a + b;\n      return true;\n  }"},
 {s:"C Patterns",q:"What are X-macros? Give a simple example.",a:"X-macros generate repetitive code from one list:\n\n  #define COLOR_LIST \\\n      X(RED,   0) \\\n      X(GREEN, 1) \\\n      X(BLUE,  2)\n\n  typedef enum {\n  #define X(name, val) name = val,\n      COLOR_LIST\n  #undef X\n  } Color;\n\nAdd a new entry in ONE place; all generated code updates automatically."},
-{s:"C Patterns",q:"What is a table-driven state machine in C? Show the key structure.",a:"  typedef State (*Handler)(Event);\n\n  static Handler table[NUM_STATES][NUM_EVENTS] = {\n      [STATE_IDLE][EVENT_START]   = handle_start,\n      [STATE_RUNNING][EVENT_STOP] = handle_stop,\n  };\n\n  State current = STATE_IDLE;\n  Event e = get_event();\n  Handler h = table[current][e];\n  if (h) current = h(e);\n\nDesignated initializers make the table self-documenting."}
+{s:"C Patterns",q:"What is a table-driven state machine in C? Show the key structure.",a:"  typedef State (*Handler)(Event);\n\n  static Handler table[NUM_STATES][NUM_EVENTS] = {\n      [STATE_IDLE][EVENT_START]   = handle_start,\n      [STATE_RUNNING][EVENT_STOP] = handle_stop,\n  };\n\n  State current = STATE_IDLE;\n  Event e = get_event();\n  Handler h = table[current][e];\n  if (h) current = h(e);\n\nDesignated initializers make the table self-documenting."},
+{s:"Code: Memory & Pointers",q:"char *get_greeting(void) {\n    char buf[32];\n    snprintf(buf, sizeof(buf),\n             \"Hello, World!\");\n    return buf;\n}\n\nint main(void) {\n    char *msg = get_greeting();\n    printf(\"%s\\n\", msg);\n    return 0;\n}",a:"WHAT IT DOES: Tries to build a greeting string and return it.\n\nBUG — Returning pointer to stack local:\nbuf lives on the stack. When get_greeting returns, the frame is gone. msg is a dangling pointer — UB, may print garbage or crash.\n\nFIXES:\n  Option 1: static char buf[32];  (not re-entrant)\n  Option 2: char *buf = malloc(32); (caller frees)\n  Option 3: Caller provides buffer:\n    void get_greeting(char *buf, size_t size);"},
+{s:"Code: Memory & Pointers",q:"int *create_array(int n) {\n    int *arr = malloc(n * sizeof(int));\n    for (int i = 0; i <= n; i++) {\n        arr[i] = i * 2;\n    }\n    return arr;\n}",a:"BUGS:\n\n1. malloc return not checked — if NULL, arr[i] is a null deref crash.\n\n2. Off-by-one: i <= n writes arr[n] which is one past the allocation — heap buffer overflow (UB).\n\n3. n * sizeof(int) can overflow size_t for large n.\n\nFIX:\n  if (!arr) return NULL;\n  for (int i = 0; i < n; i++)  // < not <="},
+{s:"Code: Memory & Pointers",q:"void process(int *data, int len) {\n    int *copy = malloc(len);\n    memcpy(copy, data, len);\n    for (int i = 0; i < len; i++) {\n        copy[i] *= 2;\n    }\n    printf(\"First: %d\\n\", copy[0]);\n}",a:"BUGS:\n\n1. malloc(len) allocates len BYTES, not len ints. Should be malloc(len * sizeof(int)). The buffer is 4x too small — heap overflow.\n\n2. Memory leak — copy is never freed.\n\n3. malloc return not checked.\n\nFIX:\n  int *copy = malloc((size_t)len * sizeof(int));\n  if (!copy) return;\n  ...use copy...\n  free(copy);"},
+{s:"Code: Memory & Pointers",q:"int main(void) {\n    int *p = malloc(sizeof(int));\n    *p = 100;\n    free(p);\n    free(p);\n    return 0;\n}",a:"BUG — Double free:\nCalling free(p) twice is undefined behavior. Corrupts the heap's internal free-list. Can crash, silently corrupt data, or be exploited as a security vulnerability.\n\nFIX:\n  free(p);\n  p = NULL;  // free(NULL) is a safe no-op"},
+{s:"Code: Memory & Pointers",q:"void update(int *p) {\n    p = malloc(sizeof(int));\n    *p = 42;\n}\n\nint main(void) {\n    int *ptr = NULL;\n    update(ptr);\n    printf(\"%d\\n\", *ptr);\n    return 0;\n}",a:"BUGS:\n\n1. Pointer passed by value — update() changes its LOCAL copy of p. The caller's ptr remains NULL.\n\n2. Memory leak — the malloc'd block is lost when update() returns.\n\n3. Null deref in main — *ptr dereferences NULL → crash.\n\nFIX — Pass pointer-to-pointer:\n  void update(int **p) {\n      *p = malloc(sizeof(int));\n      if (!*p) return;\n      **p = 42;\n  }\n  update(&ptr);"},
+{s:"Code: Memory & Pointers",q:"Player *new_player(const char *name,\n                    int age) {\n    Player *p = malloc(sizeof(Player));\n    strcpy(p->name, name);\n    p->age = age;\n    return p;\n}\n/* Player has: char name[64], int age,\n   char active, int score */",a:"BUGS:\n\n1. malloc not checked — strcpy on NULL is UB/crash.\n\n2. strcpy with no bounds check — if name > 63 chars, heap buffer overflow.\n\n3. active and score fields left uninitialized (garbage).\n\nFIX:\n  Player *p = malloc(sizeof(Player));\n  if (!p) return NULL;\n  snprintf(p->name, sizeof(p->name), \"%s\", name);\n  p->age = age;\n  p->active = 0;\n  p->score = 0;"},
+{s:"Code: Memory & Pointers",q:"int vals[5] = {1, 2, 3, 4, 5};\nint *p = vals;\n\nwhile (*p != 0) {\n    printf(\"%d\\n\", *p);\n    p++;\n}",a:"BUG — No sentinel in array:\nvals has {1,2,3,4,5} — no element is 0. The loop reads past the array indefinitely — UB, may segfault or loop reading random stack memory.\n\nFIXES:\n  Option 1: Use length-based iteration:\n    for (int i = 0; i < 5; i++)\n  Option 2: Add a sentinel:\n    int vals[] = {1, 2, 3, 4, 5, 0};"},
+{s:"Code: Memory & Pointers",q:"char *dup_string(const char *src) {\n    int len = strlen(src);\n    char *dst = malloc(len);\n    memcpy(dst, src, len);\n    return dst;\n}",a:"BUGS:\n\n1. Off by one — malloc(len) has no room for '\\0'. String is not null-terminated. Any subsequent strlen/printf runs past the end.\n\n2. int len should be size_t (strlen returns size_t).\n\n3. malloc return not checked.\n\nFIX:\n  size_t len = strlen(src);\n  char *dst = malloc(len + 1);\n  if (!dst) return NULL;\n  memcpy(dst, src, len + 1);  // copies '\\0' too"},
+{s:"Code: Memory & Pointers",q:"void zero_matrix(int rows, int cols) {\n    int matrix[rows][cols];\n    memset(matrix, 0, rows * cols);\n    printf(\"Done\\n\");\n}",a:"BUGS:\n\n1. memset size is wrong: rows * cols = number of ELEMENTS. Correct size is rows * cols * sizeof(int). Only ~25% of matrix is zeroed on a 4-byte int system.\n\n2. Integer overflow risk in rows * cols for large values.\n\n3. VLA on stack — can overflow the stack for large arrays.\n\nFIX:\n  memset(matrix, 0,\n    (size_t)rows * cols * sizeof(int));"},
+{s:"Code: Memory & Pointers",q:"int *make_pair(int a, int b) {\n    int pair[2] = {a, b};\n    return pair;\n}\n\nint main(void) {\n    int *p = make_pair(3, 7);\n    printf(\"%d %d\\n\", p[0], p[1]);\n    return 0;\n}",a:"BUG — Returning pointer to stack local (same class as A1):\npair lives on the stack frame of make_pair(). After return, p is a dangling pointer — accessing p[0] or p[1] is UB.\n\nFIXES:\n  Option 1: Heap — int *p = malloc(2 * sizeof(int));\n  Option 2: Caller provides storage:\n    void make_pair(int a, int b, int out[2])"},
+{s:"Code: Strings",q:"void greet(const char *name) {\n    char buf[16];\n    strcpy(buf, name);\n    printf(\"Hello, %s!\\n\", buf);\n}",a:"BUG — Buffer overflow:\nbuf is only 16 bytes. If name is longer than 15 chars, strcpy writes past buf — classic stack buffer overflow. An attacker who controls name can overwrite the return address.\n\nFIX:\n  snprintf(buf, sizeof(buf), \"%s\", name);"},
+{s:"Code: Strings",q:"int is_palindrome(const char *s) {\n    int n = strlen(s);\n    for (int i = 0; i < n / 2; i++) {\n        if (s[i] != s[n - i])\n            return 0;\n    }\n    return 1;\n}",a:"BUG — Off-by-one index:\ns[n - i] should be s[n - 1 - i].\n\nWhen i == 0, s[n] reads the null terminator '\\0' (not the last character). For \"abba\" (n=4): compares s[0] vs s[4] instead of s[0] vs s[3].\n\nAlso: int n should be size_t.\n\nFIX:\n  if (s[i] != s[n - 1 - i]) return 0;"},
+{s:"Code: Strings",q:"void concat_all(char *dest,\n                char **words,\n                int count) {\n    for (int i = 0; i < count; i++) {\n        strcat(dest, words[i]);\n    }\n}",a:"BUGS:\n\n1. No bounds checking — strcat appends without knowing dest's capacity. Overflows on long input.\n\n2. O(n²) performance — each strcat scans to the end of dest before appending.\n\n3. dest must already be null-terminated — if uninitialized, UB.\n\nFIX: Accept dest_size, maintain a running write pointer:\n  size_t off = strlen(dest);\n  for (...) {\n      size_t n = snprintf(dest+off, size-off, \"%s\", words[i]);\n      off += n;\n  }"},
+{s:"Code: Strings",q:"char *to_upper(const char *src) {\n    char *result = src;\n    for (int i = 0; result[i]; i++) {\n        result[i] = toupper(result[i]);\n    }\n    return result;\n}",a:"BUGS:\n\n1. Discards const — char *result = src drops const, allowing modification of what could be a read-only string literal → UB/crash.\n\n2. Modifies the original string — returns a pointer to the same (now modified) memory, not a copy.\n\n3. toupper() takes int — passing a plain char can be negative (UB). Cast to (unsigned char).\n\nFIX:\n  char *result = strdup(src);\n  if (!result) return NULL;\n  for (size_t i = 0; result[i]; i++)\n      result[i] = toupper((unsigned char)result[i]);"},
+{s:"Code: Strings",q:"int count_words(char *sentence) {\n    int count = 0;\n    char *token = strtok(sentence, \" \");\n    while (token != NULL) {\n        count++;\n        token = strtok(NULL, \" \");\n    }\n    return count;\n}\n\nint main(void) {\n    const char *s = \"hello world foo\";\n    printf(\"%d\\n\", count_words(s));\n    return 0;\n}",a:"BUGS:\n\n1. strtok MODIFIES the string in place (writes '\\0' over delimiters). Passing a string literal is UB — the literal is in read-only memory.\n\n2. const char* passed to char* parameter — discards const, the compiler should warn.\n\n3. After return, s is corrupted.\n\nFIX:\n  char copy[] = \"hello world foo\";\n  printf(\"%d\\n\", count_words(copy));"},
+{s:"Code: Strings",q:"void build_path(const char *dir,\n                const char *file) {\n    char path[256];\n    sprintf(path, \"%s/%s\", dir, file);\n    printf(\"Path: %s\\n\", path);\n}",a:"BUG — sprintf with no length limit:\nIf strlen(dir) + strlen(file) + 2 > 256, path overflows — stack buffer overflow.\n\nFIX:\n  int ret = snprintf(path, sizeof(path),\n                     \"%s/%s\", dir, file);\n  if (ret < 0 || (size_t)ret >= sizeof(path)) {\n      fprintf(stderr, \"Path too long\\n\");\n      return;\n  }"},
+{s:"Code: Strings",q:"int string_to_int(const char *s) {\n    return atoi(s);\n}",a:"BUGS:\n\n1. atoi(\"abc\") returns 0 — no error indication.\n2. atoi(\"\") returns 0 — indistinguishable from \"0\".\n3. atoi on overflow is UNDEFINED BEHAVIOR.\n\nFIX — Use strtol:\n  int string_to_int(const char *s, int *out) {\n      char *end;\n      errno = 0;\n      long val = strtol(s, &end, 10);\n      if (errno == ERANGE || end == s ||\n          *end != '\\0') return -1;\n      if (val < INT_MIN || val > INT_MAX)\n          return -1;\n      *out = (int)val;\n      return 0;\n  }"},
+{s:"Code: Strings",q:"/* Called from two threads: */\nvoid print_lines(char *buf) {\n    char *line = strtok(buf, \"\\n\");\n    while (line) {\n        printf(\"[%s]\\n\", line);\n        line = strtok(NULL, \"\\n\");\n    }\n}",a:"BUG — strtok is not thread-safe:\nstrtok stores its position in a STATIC internal pointer. If two threads call this simultaneously, they corrupt each other's parse state — data race on the hidden static variable.\n\nFIX — Use strtok_r:\n  char *saveptr;\n  char *line = strtok_r(buf, \"\\n\", &saveptr);\n  while (line) {\n      printf(\"[%s]\\n\", line);\n      line = strtok_r(NULL, \"\\n\", &saveptr);\n  }"},
+{s:"Code: Data Structures",q:"void free_list(Node *head) {\n    while (head != NULL) {\n        free(head);\n        head = head->next;\n    }\n}",a:"BUG — Use-after-free:\nfree(head) releases the node. head->next then reads a field from freed memory — UB. The allocator may have overwritten that memory.\n\nFIX:\n  while (head != NULL) {\n      Node *tmp = head->next;  // save BEFORE free\n      free(head);\n      head = tmp;\n  }"},
+{s:"Code: Data Structures",q:"typedef struct {\n    char *data;\n    int   top;\n    int   capacity;\n} Stack;\n\nvoid push(Stack *s, const char *item) {\n    s->data[s->top++] = *item;\n}\n\nchar pop(Stack *s) {\n    return s->data[s->top];\n}",a:"BUGS:\n\n1. push stores *item (one char), not a string — wrong if item is meant to be a string.\n\n2. pop reads s->data[s->top] — but top points to the NEXT empty slot. Should be s->data[--s->top] (pre-decrement).\n\n3. No bounds check — top could exceed capacity.\n\n4. No NULL check or initialization guard."},
+{s:"Code: Data Structures",q:"void vec_push(Vec *v, int val) {\n    if (v->size == v->capacity) {\n        v->capacity *= 2;\n        v->buf = realloc(v->buf,\n            v->capacity * sizeof(int));\n    }\n    v->buf[v->size++] = val;\n}",a:"BUGS:\n\n1. realloc return not checked — if it returns NULL, v->buf is overwritten (original pointer lost = leak) and v->buf[v->size++] is a null write (crash).\n\n2. Initial capacity == 0 → 0 * 2 == 0 forever. Handle zero case.\n\nFIX:\n  size_t new_cap = v->capacity\n                   ? v->capacity * 2 : 4;\n  int *tmp = realloc(v->buf,\n                     new_cap * sizeof(int));\n  if (!tmp) { /* handle error */ return; }\n  v->buf = tmp;\n  v->capacity = new_cap;"},
+{s:"Code: Data Structures",q:"float total_salary(Employee *team,\n                   int n) {\n    float total = 0;\n    for (int i = 0; i <= n; i++) {\n        total += team[i].salary;\n    }\n    return total;\n}",a:"BUGS:\n\n1. Off-by-one: i <= n reads team[n] which is one past the array — UB.\n\n2. float accumulation loses precision (~7 decimal digits). Use double for money.\n\n3. n should be validated (negative check).\n\nFIX:\n  double total_salary(Employee *team, int n) {\n      double total = 0.0;\n      for (int i = 0; i < n; i++)  // < not <=\n          total += team[i].salary;\n      return total;\n  }"},
+{s:"Code: Data Structures",q:"void gvec_get(GenericVec *v,\n              size_t idx,\n              void *out) {\n    memcpy(out,\n           v->data + idx,\n           v->elem_size);\n}\n/* v->data is void* */",a:"BUG — Pointer arithmetic on void*:\nv->data + idx advances by idx BYTES (GCC extension), but the intent is idx * elem_size bytes.\n\nStandard C forbids arithmetic on void*.\n\nAlso: no bounds check — idx >= v->count is unchecked.\n\nFIX:\n  if (idx >= v->count) return;\n  memcpy(out,\n    (char*)v->data + idx * v->elem_size,\n    v->elem_size);"},
+{s:"Code: Data Structures",q:"Node *reverse_list(Node *head) {\n    Node *prev = NULL;\n    Node *curr = head;\n    Node *next = NULL;\n\n    while (curr != NULL) {\n        next = curr->next;\n        curr->next = prev;\n        prev = curr;\n        curr = next;\n    }\n    return prev;\n}",a:"ASSESSMENT — This is CORRECT.\n\nStandard iterative linked-list reversal. prev/curr/next properly managed. New head (prev) returned.\n\n- Works for empty list (head == NULL returns NULL).\n- O(n) time, O(1) space.\n- No bugs. This is the canonical pattern.\n\nDiscussion point: The recursive version has O(n) stack depth risk for long lists."},
+{s:"Code: Data Structures",q:"int map_get(HashMap *m, int key) {\n    for (int i = 0; i < m->count; i++) {\n        if (m->keys[i] == key)\n            return m->vals[i];\n    }\n    // falls off here\n}",a:"BUG — Missing return for 'not found' case:\nIf the key isn't found, the function falls off the end without returning — UB (caller gets garbage from register).\n\nGCC warns: \"control reaches end of non-void function\".\n\nAlso: no way to distinguish \"value is 0\" from \"key not found\".\n\nFIX — Use an out-parameter:\n  int map_get(HashMap *m, int key, int *out) {\n      for (int i = 0; i < m->count; i++) {\n          if (m->keys[i] == key) {\n              *out = m->vals[i];\n              return 1;  // found\n          }\n      }\n      return 0;  // not found\n  }"},
+{s:"Code: UB & Types",q:"int add(int a, int b) {\n    if (a > 0 && b > INT_MAX - a) {\n        printf(\"Overflow!\\n\");\n    }\n    return a + b;\n}\n\nint main(void) {\n    printf(\"%d\\n\",\n           add(INT_MAX, 1));\n}",a:"BUG — Overflow detected but still performed:\nThe function correctly detects overflow, but then executes a + b anyway. With a=INT_MAX and b=1, this is signed integer overflow — UNDEFINED BEHAVIOR.\n\nThe compiler may optimize away the check entirely.\n\nFIX — Return error code, don't perform the add:\n  int add(int a, int b, int *result) {\n      if (a>0 && b>INT_MAX-a) return -1;\n      if (a<0 && b<INT_MIN-a) return -1;\n      *result = a + b;\n      return 0;\n  }"},
+{s:"Code: UB & Types",q:"unsigned int flags = 0x80000000;\nint shift_amount = 32;\nunsigned int result =\n    flags >> shift_amount;\nprintf(\"Result: %u\\n\", result);",a:"BUG — Shifting by >= bit width is UB:\nFor a 32-bit unsigned int, shifting by 32 (equal to the width) is undefined behavior. Valid shifts: 0..31.\n\nOn x86, hardware uses shift % 32 (so >>32 gives >>0 = unchanged), but the C standard does NOT guarantee this.\n\nFIX:\n  unsigned int result =\n      (shift_amount >= 32)\n      ? 0 : (flags >> shift_amount);"},
+{s:"Code: UB & Types",q:"int arr[10];\nint i = 0;\nwhile (i <= 10) {\n    arr[i] = i * i;\n    i++;\n}",a:"BUG — Off-by-one / out-of-bounds write:\nWhen i == 10, arr[10] is written. arr has valid indices 0..9. Writing arr[10] is one past the end — undefined behavior / stack corruption.\n\nFIX:\n  while (i < 10)  // strictly less than"},
+{s:"Code: UB & Types",q:"float a = 0.1f + 0.2f;\nif (a == 0.3f) {\n    printf(\"Equal\\n\");\n} else {\n    printf(\"Not equal\\n\");\n}",a:"BUG — Exact floating-point comparison:\n0.1 and 0.2 are not exactly representable in IEEE 754 binary floating point. Their sum is NOT exactly 0.3f. This comparison will almost certainly be false.\n\nFIX — Use epsilon comparison:\n  #include <math.h>\n  if (fabsf(a - 0.3f) < 1e-6f) { ... }\n\nOr use integer arithmetic when exact comparison is needed (e.g. money in cents)."},
+{s:"Code: UB & Types",q:"int x = 5;\nint result = x++ + x++;\nprintf(\"%d\\n\", result);",a:"BUG — Undefined behavior:\nBoth x++ expressions modify x, with no sequence point between them. The side effects are unsequenced — this is UB in both C99 and C11.\n\nCommon (but not guaranteed) result: result = 10 or 11, x = 7. You CANNOT rely on any outcome.\n\nFIX — Use explicit sequencing:\n  int r = x; x++;\n  r += x; x++;"},
+{s:"Code: UB & Types",q:"int val = -1;\nunsigned int mask = 0xFF;\nif (val > mask) {\n    printf(\"val is larger\\n\");\n}",a:"BUG — Signed/unsigned comparison:\nWhen comparing int and unsigned int, int is converted to unsigned int. -1 becomes UINT_MAX (4294967295 on 32-bit), which is greater than 0xFF (255).\n\nSo val > mask is TRUE even though -1 < 255 conceptually.\n\nFIX:\n  if (val > (int)mask)  // -1 > 255 → false"},
+{s:"Code: UB & Types",q:"void process_buffer(char *buf,\n                    int size) {\n    for (int i = size - 1;\n         i >= 0; i--) {\n        buf[i] = toupper(buf[i]);\n    }\n}\n\n/* called as: */\nchar *data = NULL;\nprocess_buffer(data, 0);",a:"ASSESSMENT — Safe with int, but fragile:\n\nWith size = 0: i = 0 - 1 = -1 < 0, so the loop body never executes. NULL is never dereferenced. Safe.\n\nBUT: if size were size_t (unsigned), then size - 1 wraps to SIZE_MAX → infinite loop / crash.\n\nAlso: toupper((char)) should cast to (unsigned char) to avoid UB with negative chars.\n\nThe int version works here but the pattern is fragile."},
+{s:"Code: UB & Types",q:"int divide(int a, int b) {\n    return a / b;\n}",a:"BUGS:\n\n1. Division by zero: if b == 0, this is UB (SIGFPE on most platforms).\n\n2. INT_MIN / -1 is also UB — the result (INT_MAX+1) overflows. On x86 this also raises SIGFPE.\n\nFIX:\n  int divide(int a, int b, int *result) {\n      if (b == 0) return -1;\n      if (a == INT_MIN && b == -1) return -1;\n      *result = a / b;\n      return 0;\n  }"},
+{s:"Code: UB & Types",q:"#define DOUBLE(x) x * 2\n\nint main(void) {\n    int a = 3;\n    printf(\"%d\\n\", DOUBLE(a + 1));\n    return 0;\n}",a:"BUG — Macro argument not parenthesized:\n\nExpands to: a + 1 * 2 → a + 2 → 5, not (a+1)*2 = 8.\n\nAlso: 100 / DOUBLE(5) → 100 / 5 * 2 → 40, not 10.\n\nFIX:\n  #define DOUBLE(x) ((x) * 2)\n\nParenthesize the argument AND the whole expression."},
+{s:"Code: UB & Types",q:"typedef enum {\n    RED = 0, GREEN, BLUE\n} Color;\n\nvoid print_color(Color c) {\n    switch (c) {\n        case RED:\n            printf(\"Red\\n\"); break;\n        case GREEN:\n            printf(\"Green\\n\"); break;\n    }\n}",a:"BUG — Missing enum case, no default:\nBLUE is not handled and there is no default. If c == BLUE, the switch does nothing — silent logic bug.\n\nGCC warns with -Wswitch (included in -Wall).\n\nFIX:\n  case BLUE: printf(\"Blue\\n\"); break;\n  default:\n      fprintf(stderr, \"Unknown: %d\\n\", c);\n      break;"},
+{s:"Code: UB & Types",q:"int factorial(int n) {\n    return n * factorial(n - 1);\n}",a:"BUGS:\n\n1. No base case — infinite recursion → stack overflow for ANY input.\n\n2. No guard for negative n — recurses forever.\n\n3. int overflow: 13! > INT_MAX. Use long long.\n\nFIX:\n  long long factorial(int n) {\n      if (n < 0) return -1;  // error\n      if (n <= 1) return 1;  // base case\n      return (long long)n * factorial(n - 1);\n  }"},
+{s:"Code: UB & Types",q:"int global_counter = 0;\n\nvoid increment(void) {\n    global_counter++;\n}\n\n/* Called from two threads\n   simultaneously */",a:"BUG — Data race:\nglobal_counter++ is NOT atomic (load → add → store). Two threads can load the same value, both increment, and store — losing an increment. This is UB in C11.\n\nFIXES:\n  Option 1 — Mutex:\n    pthread_mutex_lock(&mtx);\n    global_counter++;\n    pthread_mutex_unlock(&mtx);\n\n  Option 2 — C11 atomic:\n    _Atomic int global_counter = 0;\n    atomic_fetch_add(&global_counter, 1);"},
+{s:"Code: File I/O",q:"void read_config(const char *path) {\n    FILE *f = fopen(path, \"r\");\n    char line[256];\n    while (fgets(line,\n                 sizeof(line), f)) {\n        printf(\"%s\", line);\n    }\n    fclose(f);\n}",a:"BUG — fopen return not checked:\nIf file doesn't exist, fopen returns NULL. fgets(line, sizeof(line), NULL) is a null pointer dereference — crash.\n\nFIX:\n  FILE *f = fopen(path, \"r\");\n  if (!f) { perror(path); return; }\n  ...\n  fclose(f);"},
+{s:"Code: File I/O",q:"int save_data(const char *path,\n              const void *data,\n              size_t len) {\n    FILE *f = fopen(path, \"w\");\n    fwrite(data, 1, len, f);\n    fclose(f);\n    return 0;\n}",a:"BUGS:\n\n1. fopen not checked — same NULL crash risk.\n\n2. \"w\" is text mode — on Windows, '\\n' bytes are translated to \"\\r\\n\", corrupting binary data. Use \"wb\".\n\n3. fwrite return not checked — partial writes silently ignored.\n\n4. Always returns 0 even on failure.\n\nFIX:\n  FILE *f = fopen(path, \"wb\");\n  if (!f) return -1;\n  size_t written = fwrite(data, 1, len, f);\n  fclose(f);\n  return (written == len) ? 0 : -1;"},
+{s:"Code: File I/O",q:"char *read_entire_file(\n        const char *path) {\n    FILE *f = fopen(path, \"rb\");\n    fseek(f, 0, SEEK_END);\n    long size = ftell(f);\n    rewind(f);\n    char *buf = malloc(size);\n    fread(buf, 1, size, f);\n    fclose(f);\n    return buf;\n}",a:"BUGS:\n\n1. fopen not checked.\n\n2. malloc(size) — no room for '\\0'. If caller treats buf as a string, it reads past the end.\n\n3. malloc return not checked.\n\n4. fread return not checked — partial read gives truncated, partially uninitialized buffer.\n\n5. No cleanup path on any failure.\n\nFIX:\n  FILE *f = fopen(path, \"rb\");\n  if (!f) return NULL;\n  ... check each step ...\n  char *buf = malloc((size_t)size + 1);\n  size_t n = fread(buf, 1, size, f);\n  buf[n] = '\\0';\n  fclose(f);"},
+{s:"Code: File I/O",q:"void log_message(const char *msg) {\n    FILE *f = fopen(\"app.log\", \"a\");\n    fprintf(f, \"%s\\n\", msg);\n    fclose(f);\n}",a:"BUGS:\n\n1. fopen not checked.\n\n2. Opens and closes the file on EVERY call — very inefficient for high-frequency logging.\n\n3. Not thread-safe: two threads calling simultaneously interleave fopen/fprintf/fclose.\n\n4. Hardcoded filename.\n\nIMPROVEMENTS:\n- Check fopen.\n- Keep file open (static FILE*).\n- Add a mutex for thread safety.\n- Accept filename as parameter."},
+{s:"Code: Functions",q:"int max_in_array(int *arr, int len) {\n    int max = 0;\n    for (int i = 0; i < len; i++) {\n        if (arr[i] > max)\n            max = arr[i];\n    }\n    return max;\n}",a:"BUG — Wrong initial value:\nInitializing max to 0 means if ALL elements are negative, the function returns 0 (incorrect).\n\nFIX:\n  if (len <= 0) return INT_MIN;\n  int max = arr[0];\n  for (int i = 1; i < len; i++) {\n      if (arr[i] > max) max = arr[i];\n  }"},
+{s:"Code: Functions",q:"void swap(int a, int b) {\n    int tmp = a;\n    a = b;\n    b = tmp;\n}\n\nint main(void) {\n    int x = 3, y = 7;\n    swap(x, y);\n    printf(\"x=%d y=%d\\n\", x, y);\n    return 0;\n}",a:"BUG — Arguments passed by value:\nC passes by value. a and b inside swap are copies. Modifying them has no effect on x and y in the caller. Output: x=3 y=7 (unchanged).\n\nFIX — Pass by pointer:\n  void swap(int *a, int *b) {\n      int tmp = *a;\n      *a = *b;\n      *b = tmp;\n  }\n  swap(&x, &y);"},
+{s:"Code: Functions",q:"int sum_digits(int n) {\n    int sum = 0;\n    while (n > 0) {\n        sum += n % 10;\n        n /= 10;\n    }\n    return sum;\n}",a:"BUG — Fails for negative numbers:\nIf n is negative, n > 0 is immediately false — returns 0 instead of digit sum.\n\nn % 10 for negative n gives a negative remainder in C99.\n\nEdge case: n = INT_MIN cannot be negated safely (overflow).\n\nFIX:\n  unsigned int un = (n < 0)\n      ? -(unsigned int)n\n      : (unsigned int)n;\n  while (un > 0) {\n      sum += un % 10;\n      un /= 10;\n  }"},
+{s:"Code: Functions",q:"#define BUFFER_SIZE 1024\n\nvoid process_input(void) {\n    char buf[BUFFER_SIZE];\n    gets(buf);\n    printf(\"Got: %s\\n\", buf);\n}",a:"BUG — gets() is unsafe and REMOVED from C11:\ngets() reads unbounded input. Any input longer than 1024 bytes overflows buf. There is NO safe way to use gets().\n\nFIX:\n  if (!fgets(buf, sizeof(buf), stdin))\n      return;\n  // fgets includes '\\n'; strip it:\n  buf[strcspn(buf, \"\\n\")] = '\\0';"},
+{s:"Code: Functions",q:"int power(int base, int exp) {\n    if (exp == 0) return 1;\n    return base *\n           power(base, exp - 1);\n}",a:"BUGS:\n\n1. No handling of negative exponent — power(2, -1) recurses forever → stack overflow.\n\n2. Integer overflow for large base/exp.\n\n3. Inefficient: O(exp) multiplications. Use fast exponentiation O(log n).\n\nFIX:\n  long long power(long long base, int exp) {\n      if (exp < 0) return 0;\n      if (exp == 0) return 1;\n      if (exp % 2 == 0) {\n          long long half = power(base, exp/2);\n          return half * half;\n      }\n      return base * power(base, exp-1);\n  }"},
+{s:"Code: Functions",q:"int count_set_bits(unsigned int n) {\n    int count = 0;\n    while (n) {\n        count += n & 1;\n        n >> 1;\n    }\n    return count;\n}",a:"BUG — n >> 1 does not modify n:\nn >> 1 computes the shifted value but DISCARDS it. n is unchanged. The loop runs forever (if n != 0).\n\nFIX:\n  n >>= 1;   // or: n = n >> 1;\n\nIMPROVEMENT — Kernighan's trick:\n  while (n) { n &= (n - 1); count++; }\n  // O(number of set bits) instead of O(32)"},
+{s:"Code: Functions",q:"void fill_lookup(void) {\n    int table[256];\n    for (int i = 0; i < 256; i++) {\n        table[i] = i * i;\n    }\n}",a:"BUG — table is computed but never used:\ntable is local. All work is thrown away on return. The compiler will optimize the entire function to nothing at -O2 (dead store elimination).\n\nFIX — Return or use the table:\n  void fill_lookup(int table[256]) {\n      for (int i = 0; i < 256; i++)\n          table[i] = i * i;\n  }\n  // Or: make it static and return a pointer."},
+{s:"Code: Functions",q:"int safe_divide(int a, int b,\n                int *result) {\n    if (b == 0) return -1;\n    result = a / b;\n    return 0;\n}",a:"BUG — Assigns to the pointer, not through it:\nresult = a / b sets the local pointer variable to an int value. This is a type mismatch and the caller's storage is never written.\n\nFIX:\n  *result = a / b;  // dereference!"},
+{s:"Code: Concurrency",q:"int done = 0;\n\nvoid *producer(void *arg) {\n    sleep(1);\n    done = 1;\n    return NULL;\n}\n\nvoid *consumer(void *arg) {\n    while (!done) { /* spin */ }\n    printf(\"Done!\\n\");\n    return NULL;\n}",a:"BUGS:\n\n1. Data race on done — written by producer, read by consumer, no synchronization. UB in C11.\n\n2. Compiler may cache done in a register and never reload it — consumer spins forever even after done = 1.\n\n3. No memory ordering guarantee.\n\nFIX:\n  _Atomic int done = 0;  // C11 atomic\n\nOr use pthread_mutex + pthread_cond_signal to avoid busy-waiting entirely."},
+{s:"Code: Concurrency",q:"pthread_mutex_t lock_a, lock_b;\n/* both initialized */\n\nvoid *thread_one(void *arg) {\n    pthread_mutex_lock(&lock_a);\n    sleep(1);\n    pthread_mutex_lock(&lock_b);\n    pthread_mutex_unlock(&lock_b);\n    pthread_mutex_unlock(&lock_a);\n}\n\nvoid *thread_two(void *arg) {\n    pthread_mutex_lock(&lock_b);\n    sleep(1);\n    pthread_mutex_lock(&lock_a);\n    pthread_mutex_unlock(&lock_a);\n    pthread_mutex_unlock(&lock_b);\n}",a:"BUG — Classic ABBA deadlock:\nIf thread_one acquires lock_a and thread_two acquires lock_b simultaneously, each waits for the other's lock forever.\n\nAll four Coffman conditions hold: mutual exclusion, hold and wait, no preemption, circular wait.\n\nFIX — Enforce consistent lock ordering:\nBoth threads must always acquire lock_a BEFORE lock_b:\n  thread_two:\n    pthread_mutex_lock(&lock_a);  // same order\n    pthread_mutex_lock(&lock_b);"},
+{s:"Code: Concurrency",q:"static int initialized = 0;\nstatic MyObject *instance = NULL;\n\nMyObject *get_instance(void) {\n    if (!initialized) {\n        instance = create_object();\n        initialized = 1;\n    }\n    return instance;\n}",a:"BUG — Not thread-safe (singleton race):\nTwo threads can both read initialized == 0, both call create_object() — double initialization, memory leak, and potentially returning a partially-initialized object.\n\nEven a naive double-check with a mutex has memory ordering issues.\n\nFIX — Use pthread_once:\n  static pthread_once_t once =\n      PTHREAD_ONCE_INIT;\n  static void do_init(void) {\n      instance = create_object();\n  }\n  MyObject *get_instance(void) {\n      pthread_once(&once, do_init);\n      return instance;\n  }"},
+{s:"Code: Macros",q:"#define SQUARE(x)  x * x\n\nint main(void) {\n    int a = 3;\n    printf(\"%d\\n\",\n           SQUARE(a + 1));  // expect 16\n    printf(\"%d\\n\",\n           100 / SQUARE(5)); // expect 4\n    return 0;\n}",a:"BUG — No parentheses:\nSQUARE(a + 1) → a + 1 * a + 1 → 7 (not 16)\n100 / SQUARE(5) → 100 / 5 * 5 → 100 (not 4)\n\nFIX:\n  #define SQUARE(x) ((x) * (x))\n\nRESIDUAL ISSUE:\nSQUARE(x++) → ((x++) * (x++)) — x incremented twice. For this, prefer an inline function:\n  static inline int square(int x) {\n      return x * x;\n  }"},
+{s:"Code: Macros",q:"#define MAX(a, b) \\\n    ((a) > (b) ? (a) : (b))\n\nint main(void) {\n    int x = 5;\n    int y = MAX(x++, 3);\n    printf(\"x=%d y=%d\\n\", x, y);\n    return 0;\n}",a:"BUG — Double evaluation side effect:\nExpands to: ((x++) > (3) ? (x++) : (3))\nSince x=5 > 3, both x++ arms execute — x incremented TWICE.\n\nResult: y = 5 (first x++), x = 7.\nExpected: y = 5, x = 6.\n\nFIX — Use inline function:\n  static inline int max_int(int a, int b) {\n      return a > b ? a : b;\n  }\n  // Arguments evaluated exactly once."},
+{s:"Code: Macros",q:"#define ARRAY_SIZE(arr) \\\n    (sizeof(arr) / sizeof(arr[0]))\n\nvoid process(int *arr) {\n    for (int i = 0;\n         i < ARRAY_SIZE(arr); i++) {\n        printf(\"%d\\n\", arr[i]);\n    }\n}",a:"BUG — ARRAY_SIZE on a pointer, not an array:\nWhen arr decays to int* (function parameter), sizeof(arr) = 8 (pointer size on 64-bit). sizeof(arr[0]) = 4. Result: 8/4 = 2.\n\nThe loop iterates only 2 times.\n\nARRAY_SIZE only works on actual array objects in the same scope.\n\nFIX:\n  void process(int *arr, size_t len) {\n      for (size_t i = 0; i < len; i++) ...\n  }"},
+{s:"Code: Macros",q:"#define MIN(a,b)  a < b ? a : b\n\nint val = MIN(3, 5) + 1;",a:"BUG — No parentheses:\nExpands to: 3 < 5 ? 3 : 5 + 1\n\nDue to precedence (?: is low): 3 < 5 ? 3 : (5+1) → 3.\nExpected: MIN(3,5) + 1 = 3 + 1 = 4.\n\nFIX:\n  #define MIN(a,b) ((a) < (b) ? (a) : (b))"},
+{s:"Code: Security",q:"void handle_input(void) {\n    char name[64];\n    printf(\"Enter name: \");\n    scanf(\"%s\", name);\n    printf(\"Hello, %s\\n\", name);\n}",a:"BUG — scanf %s has no width limit:\n%s reads until whitespace with no length limit — overflows name[64] on long input. Classic stack buffer overflow.\n\nFIX:\n  scanf(\"%63s\", name);  // at most 63 + '\\0'\n  // Or use:\n  fgets(name, sizeof(name), stdin);"},
+{s:"Code: Security",q:"int read_packet(int sock,\n                char *buf,\n                int len) {\n    int received =\n        recv(sock, buf, len, 0);\n    buf[received] = '\\0';\n    return received;\n}",a:"BUGS:\n\n1. recv returns -1 on error and 0 on connection close. buf[-1] = '\\0' is an out-of-bounds write.\n\n2. If received == len, buf[len] is one past the end.\n\nFIX:\n  ssize_t received =\n      recv(sock, buf, len - 1, 0);\n  if (received <= 0) return received;\n  buf[received] = '\\0';"},
+{s:"Code: Security",q:"int **make_grid(int rows, int cols) {\n    int **grid = malloc(\n        rows * sizeof(int*));\n    for (int i = 0; i < rows; i++) {\n        grid[i] = malloc(\n            cols * sizeof(int));\n    }\n    return grid;\n}\n\nvoid free_grid(int **grid,\n               int rows) {\n    free(grid);\n}",a:"BUG — Memory leak in free_grid:\nEach grid[i] was individually malloc'd but free_grid only frees the outer array. All inner row arrays are leaked.\n\nFIX:\n  void free_grid(int **grid, int rows) {\n      for (int i = 0; i < rows; i++)\n          free(grid[i]);\n      free(grid);\n  }"},
+{s:"Code: Security",q:"void copy_input(char *dst,\n                const char *src,\n                size_t dst_size) {\n    if (strlen(src) <= dst_size) {\n        memcpy(dst, src,\n               strlen(src));\n    }\n}",a:"BUGS:\n\n1. Off-by-one: strlen(src) <= dst_size allows copying exactly dst_size bytes — no room for '\\0'.\n\n2. No null terminator written — dst is not a valid C string.\n\n3. strlen called twice (minor inefficiency).\n\nFIX:\n  if (dst_size == 0) return;\n  size_t len = strlen(src);\n  size_t n = (len < dst_size - 1)\n             ? len : dst_size - 1;\n  memcpy(dst, src, n);\n  dst[n] = '\\0';"},
+{s:"Code: Security",q:"int compute_total(int *prices,\n                  int n) {\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        total += prices[i];\n    }\n    return total;\n}\n/* prices array has 100 elements,\n   n is received from network */",a:"BUG — No input validation on n:\nn comes from an untrusted source.\n\n1. Negative n: loop doesn't run, returns 0.\n2. n > 100: reads past the array — out-of-bounds read, information disclosure or crash.\n3. Integer overflow: large prices/n can overflow total.\n\nFIX:\n  #define MAX_PRICES 100\n  if (n < 0 || n > MAX_PRICES) return -1;\n  long long total = 0;\n  for (int i = 0; i < n; i++)\n      total += prices[i];\n  if (total > INT_MAX) return -1;\n  return (int)total;"},
+{s:"Code: Tricky Patterns",q:"int arr[5] = {0};\nint *p = arr;\n\nfor (int i = 0; i < 5; i++) {\n    *(p++) = i * 10;\n}\n\n/* Questions:\n   What is *p after the loop?\n   What is arr[2]? */",a:"*p after the loop:\np has been incremented 5 times past arr[0], so p == &arr[5] (one past the end). *p is an out-of-bounds read — UNDEFINED BEHAVIOR.\n\narr[2]:\narr[2] = 20 (i=2: *(p++) = 2*10 = 20 → stored at arr[2] before p advances).\n\nPointing one-past-end is valid; dereferencing is not."},
+{s:"Code: Tricky Patterns",q:"void mystery(char *s) {\n    while (*s) {\n        if (*s >= 'a' && *s <= 'z')\n            *s -= 32;\n        s++;\n    }\n}",a:"WHAT IT DOES:\nConverts a string to uppercase in-place (ASCII only). Subtracting 32 from a lowercase letter gives the uppercase value.\n\nISSUES:\n1. Only works for ASCII; not locale-aware. Use toupper((unsigned char)c) instead.\n2. Modifies string in place — will CRASH on a string literal (read-only).\n3. The magic number 32 is not self-documenting. Use 'a'-'A' or toupper()."},
+{s:"Code: Tricky Patterns",q:"struct S { char a; int b;\n           char c; double d; };\nstruct T { int b; double d;\n           char a; char c; };\n\n/* What are sizeof(S) and\n   sizeof(T) on a 64-bit system? */",a:"sizeof(S): 24 bytes\n  char a (1) + 3pad + int b (4) + char c (1) + 7pad + double d (8) = 24\n\nsizeof(T): 24 bytes\n  int b (4) + 4pad + double d (8) + char a (1) + char c (1) + 6pad = 24\n\nOptimal reorder:\n  struct U { double d; int b; char a; char c; };\n  // 8 + 4 + 1 + 1 + 2pad = 16 bytes\n\nKEY LESSON: Order members largest-to-smallest to minimize padding."},
+{s:"Code: Tricky Patterns",q:"void init(int *arr, size_t n) {\n    memset(arr, 1,\n           n * sizeof(int));\n}\n\n/* After init, what is arr[0]? */",a:"arr[0] is NOT 1.\n\nmemset sets each BYTE to 0x01. An int is 4 bytes, so arr[0] has bytes {0x01, 0x01, 0x01, 0x01} = 0x01010101 = 16843009.\n\nmemset(arr, 0, ...) and memset(arr, 0xFF, ...) give meaningful int values (0 and -1). Any other byte value is almost never what you want.\n\nFIX — Use a loop:\n  for (size_t i = 0; i < n; i++) arr[i] = 1;"},
+{s:"Code: Tricky Patterns",q:"unsigned char a = 200;\nunsigned char b = 100;\nunsigned char c = a + b;\nint           d = a + b;\n\n/* What are c and d? */",a:"a + b:\nBoth promoted to int (integer promotion). int(200) + int(100) = 300.\n\nunsigned char c = 300:\n300 truncated to 8 bits: 300 - 256 = 44. c = 44.\n\nint d = 300:\nNo truncation. d = 300.\n\nKEY LESSON: Integer promotion saves the int; unsigned char truncates on assignment when value exceeds UCHAR_MAX (255)."},
+{s:"Code: Tricky Patterns",q:"int arr[] = {10, 20, 30, 40, 50};\nprintf(\"%d\\n\", 2[arr]);",a:"ANSWER: Prints 30.\n\nIn C, a[i] is defined as *(a + i), which is commutative: *(2 + arr) == *(arr + 2) == arr[2] = 30.\n\nCompletely legal but intentionally confusing. You would never write this in production code."},
+{s:"Code: Tricky Patterns",q:"int n = 0;\nif (n = 5)\n    printf(\"True\\n\");\nelse\n    printf(\"False\\n\");",a:"WHAT: This is ASSIGNMENT, not comparison.\n\nn = 5 assigns 5 to n and evaluates to 5 (non-zero → true). Output: \"True\".\n\nBUG (most likely): Programmer meant n == 5.\n\nGCC warns with -Wparentheses. Writing if ((n = 5)) silences the warning and signals intentional assignment."},
+{s:"Code: Tricky Patterns",q:"size_t len = 0;\nif (len - 1 < 10) {\n    printf(\"small\\n\");\n}",a:"BUG — Unsigned underflow:\nlen is size_t (unsigned). len - 1 = 0 - 1 wraps to SIZE_MAX (18446744073709551615 on 64-bit).\n\nSIZE_MAX < 10 is FALSE. \"small\" is never printed.\n\nThis is a very common bug with size_t in loop termination.\n\nFIX:\n  if (len > 0 && len - 1 < 10) { ... }\n  // OR: if (len < 11) { ... }"},
+{s:"Code: Tricky Patterns",q:"void *memdup(const void *src,\n             size_t n) {\n    void *dst = malloc(n);\n    if (dst) memcpy(dst, src, n);\n    return dst;\n}\n\n/* Is this correct? */",a:"ASSESSMENT — Correct and well-written:\n\n- Checks malloc return before use.\n- Returns NULL on allocation failure.\n- Works for any type (void*).\n- No UB.\n\nMINOR IMPROVEMENTS:\n1. If n == 0, malloc may return NULL or a unique pointer; memcpy with n==0 is safe. Consider: if (n == 0) return NULL;\n2. Document that caller must free().\n3. Could add: if (!src) return NULL;"}
 ];
 
-// ── localStorage helpers ──────────────────────────────────────
 const LS_KEY = 'cflash_missed_v1';
+function saveMissed(cards) { try { localStorage.setItem(LS_KEY, JSON.stringify(cards.map(c=>c.q))); } catch(e) {} }
+function loadMissed() { try { const raw=localStorage.getItem(LS_KEY); if(!raw)return[]; return JSON.parse(raw).map(q=>ALL_CARDS.find(c=>c.q===q)).filter(Boolean); } catch(e){ return[]; } }
+function clearSaved() { try { localStorage.removeItem(LS_KEY); } catch(e) {} }
 
-function saveMissed(cards) {
-  try {
-    // Store just the question strings as unique IDs — cards are rebuilt from ALL_CARDS on load
-    const keys = cards.map(c => c.q);
-    localStorage.setItem(LS_KEY, JSON.stringify(keys));
-  } catch(e) {}
-}
-
-function loadMissed() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return [];
-    const keys = JSON.parse(raw);
-    // Rebuild full card objects by matching question text
-    return keys.map(q => ALL_CARDS.find(c => c.q === q)).filter(Boolean);
-  } catch(e) { return []; }
-}
-
-function clearSaved() {
-  try { localStorage.removeItem(LS_KEY); } catch(e) {}
-}
-
-// ── State ─────────────────────────────────────────────────────
 let deck=[],idx=0,flipped=false,got=0,missed=0,section='all',missedCards=[];
 
-// ── Header saved-pill ─────────────────────────────────────────
+function isCodeCard(c) { return c.s.startsWith('Code:'); }
+
 function updateSavedPill() {
   const saved = loadMissed();
   const pill = document.getElementById('savedPill');
   const bar = document.getElementById('savedBar');
   if (saved.length > 0) {
-    pill.textContent = '&#9733; ' + saved.length + ' saved — tap to review';
     pill.innerHTML = '&#9733; ' + saved.length + ' saved &mdash; tap to review';
     pill.style.display = 'inline-block';
     bar.classList.add('visible');
@@ -640,25 +522,27 @@ function updateSavedPill() {
   }
 }
 
-// ── Section filter ────────────────────────────────────────────
-function filterSection(){
-  section=document.getElementById('sectionSel').value;
-  deck=ALL_CARDS.filter(c=>section==='all'||c.s===section);
+function filterSection() {
+  section = document.getElementById('sectionSel').value;
+  if (section === 'all') {
+    deck = [...ALL_CARDS];
+  } else if (section === '__concepts__') {
+    deck = ALL_CARDS.filter(c => !isCodeCard(c));
+  } else if (section === '__code__') {
+    deck = ALL_CARDS.filter(c => isCodeCard(c));
+  } else {
+    deck = ALL_CARDS.filter(c => c.s === section);
+  }
   resetDeck(false);
 }
 
-// ── Shuffle ───────────────────────────────────────────────────
-function shuffle(){
-  for(let i=deck.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [deck[i],deck[j]]=[deck[j],deck[i]];
-  }
+function shuffle() {
+  for(let i=deck.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
   idx=0;got=0;missed=0;missedCards=[];flipped=false;render();
 }
 
-// ── Reset ─────────────────────────────────────────────────────
-function resetDeck(doFilter=true){
-  if(doFilter)deck=ALL_CARDS.filter(c=>section==='all'||c.s===section);
+function resetDeck(doFilter=true) {
+  if(doFilter) filterSection();
   idx=0;got=0;missed=0;missedCards=[];flipped=false;
   document.getElementById('doneBanner').style.display='none';
   document.getElementById('cardScene').classList.remove('hidden');
@@ -668,8 +552,7 @@ function resetDeck(doFilter=true){
   render();
 }
 
-// ── Review missed (session, from done screen) ─────────────────
-function reviewMissed(){
+function reviewMissed() {
   if(!missedCards.length)return;
   deck=[...missedCards];
   idx=0;got=0;missed=0;missedCards=[];flipped=false;
@@ -681,12 +564,10 @@ function reviewMissed(){
   render();
 }
 
-// ── Review saved (persisted across sessions) ──────────────────
-function reviewSaved(){
+function reviewSaved() {
   const saved = loadMissed();
   if(!saved.length) return;
-  deck=[...saved];
-  section='all';
+  deck=[...saved]; section='all';
   document.getElementById('sectionSel').value='all';
   idx=0;got=0;missed=0;missedCards=[];flipped=false;
   document.getElementById('doneBanner').style.display='none';
@@ -697,76 +578,81 @@ function reviewSaved(){
   render();
 }
 
-// ── Clear saved cards ─────────────────────────────────────────
-function clearSavedCards(){
+function clearSavedCards() {
   const n = loadMissed().length;
   if(!n) return;
-  if(!confirm('Clear all ' + n + ' saved cards? This cannot be undone.')) return;
+  if(!confirm('Clear all ' + n + ' saved cards?')) return;
   clearSaved();
   updateSavedPill();
 }
 
-// ── Flip ──────────────────────────────────────────────────────
-function flipCard(){
+function flipCard() {
   if(idx>=deck.length)return;
   flipped=!flipped;
   document.getElementById('cardInner').classList.toggle('flipped',flipped);
   const vr=document.getElementById('verdictRow');
-  if(flipped)vr.classList.remove('verdict-hidden');
+  if(flipped) vr.classList.remove('verdict-hidden');
   else vr.classList.add('verdict-hidden');
 }
 
-// ── Verdict ───────────────────────────────────────────────────
-function verdict(wasGot){
+function verdict(wasGot) {
   if(!flipped)return;
-  if(wasGot){
+  if(wasGot) {
     got++;
-    // If this card was previously saved as missed, remove it now
     const saved = loadMissed().filter(c => c.q !== deck[idx].q);
     saveMissed(saved);
   } else {
     missed++;
     missedCards.push(deck[idx]);
-    // Merge into persisted missed list (deduplicate by question)
     const existing = loadMissed();
-    const already = existing.some(c => c.q === deck[idx].q);
-    if(!already) saveMissed([...existing, deck[idx]]);
+    if(!existing.some(c => c.q === deck[idx].q)) saveMissed([...existing, deck[idx]]);
   }
   idx++;flipped=false;
   document.getElementById('cardInner').classList.remove('flipped');
   document.getElementById('verdictRow').classList.add('verdict-hidden');
   updateSavedPill();
-  if(idx>=deck.length)showDone();
+  if(idx>=deck.length) showDone();
   else render();
 }
 
-// ── Nav ───────────────────────────────────────────────────────
-function prevCard(){
+function prevCard() {
   if(idx>0){idx--;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('verdict-hidden');render();}
 }
-function nextCard(){
+function nextCard() {
   if(idx<deck.length-1){idx++;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('verdict-hidden');render();}
 }
 
-// ── Render ────────────────────────────────────────────────────
-function render(){
+function render() {
   if(!deck.length)return;
   const c=deck[Math.min(idx,deck.length-1)];
-  document.getElementById('frontQ').textContent=c.q;
-  document.getElementById('backA').innerHTML=formatAnswer(c.a);
-  document.getElementById('sectionPill').textContent=c.s;
-  document.getElementById('cardCounter').textContent='Card '+(idx+1)+' of '+deck.length;
+  const code = isCodeCard(c);
+  // Front label
+  const frontLabel = document.getElementById('frontLabel');
+  frontLabel.innerHTML = (code ? 'Code Review' : 'Question') + ' &nbsp;&#x21C4; tap to flip';
+  // Front card styling
+  const cardFront = document.getElementById('cardFront');
+  cardFront.classList.toggle('code-card', code);
+  // Question text
+  const frontQ = document.getElementById('frontQ');
+  frontQ.textContent = c.q;
+  frontQ.classList.toggle('code-text', code);
+  // Answer
+  document.getElementById('backA').innerHTML = formatAnswer(c.a);
+  // Section pill
+  const pill = document.getElementById('sectionPill');
+  pill.textContent = c.s;
+  pill.className = 'section-pill ' + (code ? 'code' : 'concept');
+  // Counter
+  document.getElementById('cardCounter').textContent = 'Card '+(idx+1)+' of '+deck.length;
   const done=got+missed;
   document.getElementById('sTotal').textContent=deck.length;
   document.getElementById('sGot').textContent=got;
   document.getElementById('sMiss').textContent=missed;
   document.getElementById('sLeft').textContent=deck.length-done;
-  const pct=deck.length?Math.round(done/deck.length*100):0;
-  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressFill').style.width=(deck.length?Math.round(done/deck.length*100):0)+'%';
 }
 
-// ── Format answer ─────────────────────────────────────────────
-function formatAnswer(a){
+function formatAnswer(a) {
   const esc=a.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const parts=esc.split('\n');
   let out='',inCode=false,codeBuf='';
@@ -775,29 +661,26 @@ function formatAnswer(a){
     if(isCode){inCode=true;codeBuf+=(codeBuf?'\n':'')+line.trim();}
     else{
       if(inCode){out+='<pre>'+codeBuf+'</pre>';codeBuf='';inCode=false;}
-      out+=(out&&!out.endsWith('</pre>'))? '<br>'+line : line;
+      out+=(out&&!out.endsWith('</pre>'))?'<br>'+line:line;
     }
   }
   if(inCode)out+='<pre>'+codeBuf+'</pre>';
   return out;
 }
 
-// ── Done screen ───────────────────────────────────────────────
-function showDone(){
+function showDone() {
   document.getElementById('cardScene').classList.add('hidden');
   document.getElementById('footer').classList.add('hidden');
-  const banner=document.getElementById('doneBanner');
-  banner.style.display='block';
+  document.getElementById('doneBanner').style.display='block';
   const pct=deck.length?Math.round(got/deck.length*100):0;
   document.getElementById('doneStats').textContent='You got '+got+' of '+deck.length+' correct ('+pct+'%). '+missed+' cards saved for review.';
   document.getElementById('reviewMissedBtn').style.display=missedCards.length>0?'inline-block':'none';
-  const savedCount = loadMissed().length;
-  const savedBtn = document.getElementById('reviewSavedDoneBtn');
-  savedBtn.textContent = 'Review all saved ('+savedCount+')';
-  savedBtn.style.display = savedCount>0?'inline-block':'none';
+  const savedCount=loadMissed().length;
+  const savedBtn=document.getElementById('reviewSavedDoneBtn');
+  savedBtn.textContent='Review all saved ('+savedCount+')';
+  savedBtn.style.display=savedCount>0?'inline-block':'none';
 }
 
-// ── Boot ──────────────────────────────────────────────────────
 updateSavedPill();
 filterSection();
 </script>

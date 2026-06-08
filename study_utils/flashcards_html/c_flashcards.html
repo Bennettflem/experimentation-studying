@@ -8,101 +8,34 @@
 <title>Deep C Review — Flashcards</title>
 <style>
   :root {
-    --bg: #0d0f14;
-    --surface: #161a22;
-    --surface2: #1e2330;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.14);
-    --text: #e8eaf0;
-    --muted: #7a8099;
-    --accent: #4f8ef7;
-    --accent-dim: rgba(79,142,247,0.15);
-    --green: #3ecf8e;
-    --green-dim: rgba(62,207,142,0.12);
-    --red: #f76f6f;
-    --red-dim: rgba(247,111,111,0.12);
+    --bg: #0d0f14; --surface: #161a22; --surface2: #1e2330;
+    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+    --text: #e8eaf0; --muted: #7a8099;
+    --accent: #4f8ef7; --accent-dim: rgba(79,142,247,0.15);
+    --green: #3ecf8e; --green-dim: rgba(62,207,142,0.12);
+    --red: #f76f6f; --red-dim: rgba(247,111,111,0.12);
     --amber: #f7b955;
-    --code-accent: #c792ea;
-    --code-dim: rgba(199,146,234,0.12);
+    --code-accent: #c792ea; --code-dim: rgba(199,146,234,0.12);
     --mono: 'Courier New', Courier, monospace;
-    --radius: 14px;
-    --radius-sm: 8px;
+    --radius: 14px; --radius-sm: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    overflow-x: hidden;
-  }
-  .app {
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
-  }
-  .header {
-    padding: 14px 16px 10px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    position: sticky;
-    top: 0;
-    background: var(--bg);
-    z-index: 10;
-  }
-  .header-title {
-    font-size: 13px; font-weight: 600; color: var(--accent);
-    letter-spacing: .04em; text-transform: uppercase; white-space: nowrap;
-  }
-  .header select {
-    flex: 1; min-width: 0;
-    background: var(--surface); color: var(--text);
-    border: 1px solid var(--border2); border-radius: var(--radius-sm);
-    padding: 7px 10px; font-size: 13px;
-    appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a8099' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 10px center;
-    padding-right: 28px; cursor: pointer;
-  }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.5; overflow-x: hidden; }
+  .app { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; max-width: 700px; margin: 0 auto; padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0); }
+  .header { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; position: sticky; top: 0; background: var(--bg); z-index: 10; }
+  .header-title { font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+  .header select { flex: 1; min-width: 0; background: var(--surface); color: var(--text); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13px; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a8099' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; cursor: pointer; }
   .header select option[disabled] { color: var(--muted); font-style: italic; font-size: 11px; }
   .header-btns { display: flex; gap: 6px; }
-  .icon-btn {
-    background: var(--surface); border: 1px solid var(--border2); color: var(--muted);
-    border-radius: var(--radius-sm); width: 36px; height: 36px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; cursor: pointer; flex-shrink: 0;
-  }
+  .icon-btn { background: var(--surface); border: 1px solid var(--border2); color: var(--muted); border-radius: var(--radius-sm); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; flex-shrink: 0; }
   .icon-btn:active { background: var(--surface2); color: var(--text); }
-  .saved-bar {
-    display: none; align-items: center; justify-content: space-between;
-    padding: 6px 16px; background: rgba(247,185,85,0.08);
-    border-bottom: 1px solid rgba(247,185,85,0.2); gap: 8px;
-  }
+  .saved-bar { display: none; align-items: center; justify-content: space-between; padding: 6px 16px; background: rgba(247,185,85,0.08); border-bottom: 1px solid rgba(247,185,85,0.2); gap: 8px; }
   .saved-bar.visible { display: flex; }
-  #savedPill {
-    background: rgba(247,185,85,0.15); color: var(--amber);
-    border: 1px solid rgba(247,185,85,0.35); border-radius: 20px;
-    padding: 4px 12px; font-size: 12px; font-weight: 600;
-    cursor: pointer; white-space: nowrap;
-  }
+  #savedPill { background: rgba(247,185,85,0.15); color: var(--amber); border: 1px solid rgba(247,185,85,0.35); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   #savedPill:active { opacity: .75; }
-  .saved-clear {
-    background: none; border: none; color: var(--muted);
-    font-size: 12px; cursor: pointer; padding: 4px 6px; white-space: nowrap;
-  }
+  .saved-clear { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; padding: 4px 6px; white-space: nowrap; }
   .saved-clear:active { color: var(--red); }
-  .stats-bar {
-    display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface);
-  }
+  .stats-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface); }
   .stat { flex: 1; padding: 8px 4px; text-align: center; border-right: 1px solid var(--border); }
   .stat:last-child { border-right: none; }
   .stat-num { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1; }
@@ -111,95 +44,38 @@
   .stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
   .progress-wrap { height: 3px; background: var(--surface2); }
   .progress-fill { height: 100%; background: var(--accent); transition: width .4s ease; }
-  .main {
-    flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px;
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
-  }
-  .card-meta {
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 12px; color: var(--muted);
-  }
-  .section-pill {
-    border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;
-  }
+  .main { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .section-pill { border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
   .section-pill.concept { background: var(--accent-dim); color: var(--accent); }
   .section-pill.code { background: var(--code-dim); color: var(--code-accent); }
   .card-scene { perspective: 1000px; width: 100%; cursor: pointer; }
-  .card-inner {
-    position: relative; width: 100%; min-height: 220px;
-    transform-style: preserve-3d;
-    transition: transform .42s cubic-bezier(.4,0,.2,1);
-  }
+  .card-inner { position: relative; width: 100%; min-height: 220px; transform-style: preserve-3d; transition: transform .42s cubic-bezier(.4,0,.2,1); }
   .card-inner.flipped { transform: rotateY(180deg); }
-  .card-face {
-    position: absolute; top: 0; left: 0; width: 100%; min-height: 220px;
-    backface-visibility: hidden; -webkit-backface-visibility: hidden;
-    border-radius: var(--radius); padding: 18px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
+  .card-face { position: absolute; top: 0; left: 0; width: 100%; min-height: 220px; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; gap: 10px; }
   .card-front { background: var(--surface); border: 1px solid var(--border2); }
   .card-back { background: var(--surface2); border: 1px solid var(--border2); transform: rotateY(180deg); }
-  .card-label {
-    font-size: 10px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .08em; color: var(--muted);
-  }
+  .card-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
   .card-front .card-label { color: var(--accent); }
   .card-front.code-card .card-label { color: var(--code-accent); }
-  .card-q {
-    font-size: clamp(14px, 3.5vw, 17px); font-weight: 500; color: var(--text);
-    line-height: 1.55; white-space: pre-wrap; flex: 1;
-  }
-  .card-q.code-text {
-    font-family: var(--mono); font-size: clamp(11px, 2.8vw, 13px);
-    background: var(--bg); border: 1px solid var(--border2);
-    border-radius: var(--radius-sm); padding: 12px 14px;
-    line-height: 1.5; overflow-x: auto;
-  }
-  .card-a {
-    font-size: clamp(12px, 3vw, 14px); color: var(--text); line-height: 1.65;
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
-  }
-  .card-a pre {
-    font-family: var(--mono); font-size: clamp(10px, 2.5vw, 12px);
-    background: var(--bg); border: 1px solid var(--border2);
-    border-radius: var(--radius-sm); padding: 10px 12px; margin: 8px 0;
-    white-space: pre-wrap; word-break: break-word; overflow-x: auto;
-  }
-  .footer {
-    position: sticky; bottom: 0; left: 0; right: 0;
-    background: var(--bg); border-top: 1px solid var(--border);
-    padding: 10px 16px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-    display: flex; flex-direction: column; gap: 8px; z-index: 10;
-  }
+  .card-q { font-size: clamp(14px, 3.5vw, 17px); font-weight: 500; color: var(--text); line-height: 1.55; white-space: pre-wrap; flex: 1; }
+  .card-q.code-text { font-family: var(--mono); font-size: clamp(11px, 2.8vw, 13px); background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 12px 14px; line-height: 1.5; overflow-x: auto; }
+  .card-a { font-size: clamp(12px, 3vw, 14px); color: var(--text); line-height: 1.65; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .card-a pre { font-family: var(--mono); font-size: clamp(10px, 2.5vw, 12px); background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 10px 12px; margin: 8px 0; white-space: pre-wrap; word-break: break-word; overflow-x: auto; }
+  .footer { position: sticky; bottom: 0; left: 0; right: 0; background: var(--bg); border-top: 1px solid var(--border); padding: 10px 16px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 8px; z-index: 10; }
   .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .btn {
-    border-radius: var(--radius-sm); padding: 13px 10px; font-size: 14px;
-    font-weight: 600; cursor: pointer; border: 1.5px solid; text-align: center;
-    -webkit-user-select: none; user-select: none;
-  }
+  .btn { border-radius: var(--radius-sm); padding: 13px 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1.5px solid; text-align: center; -webkit-user-select: none; user-select: none; }
   .btn:active { transform: scale(0.97); opacity: .85; }
   .btn-got { background: var(--green-dim); border-color: var(--green); color: var(--green); }
   .btn-miss { background: var(--red-dim); border-color: var(--red); color: var(--red); }
   .actions.verdict-hidden { display: none; }
   .nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .btn-nav {
-    background: var(--surface); border: 1px solid var(--border2); color: var(--muted);
-    border-radius: var(--radius-sm); padding: 10px; font-size: 13px;
-    cursor: pointer; text-align: center;
-  }
+  .btn-nav { background: var(--surface); border: 1px solid var(--border2); color: var(--muted); border-radius: var(--radius-sm); padding: 10px; font-size: 13px; cursor: pointer; text-align: center; }
   .btn-nav:active { background: var(--surface2); color: var(--text); }
-  .done-banner {
-    background: var(--surface); border: 1px solid var(--border2);
-    border-radius: var(--radius); padding: 28px 20px; text-align: center; display: none;
-  }
+  .done-banner { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 28px 20px; text-align: center; display: none; }
   .done-banner h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
   .done-banner p { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
-  .done-banner .btn-restart {
-    background: var(--accent-dim); border: 1.5px solid var(--accent); color: var(--accent);
-    border-radius: var(--radius-sm); padding: 12px 24px; font-size: 14px;
-    font-weight: 600; cursor: pointer; margin: 4px;
-  }
+  .done-banner .btn-restart { background: var(--accent-dim); border: 1.5px solid var(--accent); color: var(--accent); border-radius: var(--radius-sm); padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer; margin: 4px; }
   .done-banner .btn-restart:active { opacity: .8; }
   .btn-saved { background: rgba(247,185,85,0.1)!important; border-color: var(--amber)!important; color: var(--amber)!important; }
   .card-scene.hidden { display: none; }
@@ -211,34 +87,40 @@
   <div class="header">
     <span class="header-title">Deep C</span>
     <select id="sectionSel" onchange="filterSection()">
-      <option value="all">All cards (200)</option>
-      <option value="__concepts__">All Concepts (130)</option>
-      <option value="__code__">All Code Samples (70)</option>
+      <option value="all">All cards (263)</option>
+      <option value="__concepts__">All Concepts (182)</option>
+      <option value="__code__">All Code Review (81)</option>
       <option disabled>───── Concepts ─────</option>
-      <option value="Memory Layout">1 — Memory Layout (12)</option>
-      <option value="Pointers">2 — Pointers (18)</option>
-      <option value="Strings">3 — Strings (15)</option>
-      <option value="Memory Functions">4 — Memory Functions (15)</option>
-      <option value="Undefined Behavior">5 — Undefined Behavior (12)</option>
-      <option value="Type System">6 — Type System (10)</option>
-      <option value="Structs & Unions">7 — Structs &amp; Unions (8)</option>
-      <option value="Scope & Linkage">8 — Scope &amp; Linkage (7)</option>
-      <option value="Preprocessor">9 — Preprocessor (7)</option>
-      <option value="File I/O">10 — File I/O (6)</option>
-      <option value="Concurrency">11 — Concurrency (5)</option>
-      <option value="Compilation">12 — Compilation (7)</option>
-      <option value="C Patterns">13 — C Patterns (8)</option>
+      <option value="Memory Layout">Memory Layout (12)</option>
+      <option value="Pointers">Pointers (22)</option>
+      <option value="Strings">Strings (15)</option>
+      <option value="Memory Functions">Memory Functions (20)</option>
+      <option value="Undefined Behavior">Undefined Behavior (12)</option>
+      <option value="Type System">Type System (10)</option>
+      <option value="Structs & Unions">Structs &amp; Unions (8)</option>
+      <option value="Scope & Linkage">Scope &amp; Linkage (7)</option>
+      <option value="Preprocessor">Preprocessor (7)</option>
+      <option value="File I/O">File I/O (6)</option>
+      <option value="Concurrency">Concurrency (15)</option>
+      <option value="Compilation">Compilation (7)</option>
+      <option value="C Patterns">C Patterns (8)</option>
+      <option value="Sockets & Networking">Sockets &amp; Networking (9)</option>
+      <option value="SQL & Databases">SQL &amp; Databases (9)</option>
+      <option value="TLS & Security">TLS &amp; Security (7)</option>
+      <option value="Kubernetes">Kubernetes (8)</option>
       <option disabled>───── Code Review ─────</option>
-      <option value="Code: Memory & Pointers">Memory & Pointers (10)</option>
+      <option value="Code: Memory & Pointers">Memory & Pointers (12)</option>
       <option value="Code: Strings">Strings (8)</option>
       <option value="Code: Data Structures">Data Structures (7)</option>
       <option value="Code: UB & Types">UB & Types (12)</option>
       <option value="Code: File I/O">File I/O (4)</option>
       <option value="Code: Functions">Functions (8)</option>
-      <option value="Code: Concurrency">Concurrency (3)</option>
+      <option value="Code: Concurrency">Concurrency (6)</option>
       <option value="Code: Macros">Macros (4)</option>
       <option value="Code: Security">Security (5)</option>
       <option value="Code: Tricky Patterns">Tricky Patterns (9)</option>
+      <option value="Code: Sockets">Sockets (4)</option>
+      <option value="Code: SQL">SQL (2)</option>
     </select>
     <div class="header-btns">
       <button class="icon-btn" onclick="shuffle()" title="Shuffle">&#x21BB;</button>
@@ -256,10 +138,9 @@
     <div class="stat"><div class="stat-num" id="sLeft">0</div><div class="stat-lbl">Left</div></div>
   </div>
   <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-
   <div class="main">
     <div class="card-meta">
-      <span id="cardCounter">Card 1 of 200</span>
+      <span id="cardCounter">Card 1 of 263</span>
       <span class="section-pill concept" id="sectionPill"></span>
     </div>
     <div class="card-scene" id="cardScene" onclick="flipCard()">
@@ -282,7 +163,6 @@
       <button class="btn-restart btn-saved" onclick="reviewSaved()" id="reviewSavedDoneBtn" style="display:none">Review all saved</button>
     </div>
   </div>
-
   <div class="footer" id="footer">
     <div class="actions verdict-hidden" id="verdictRow">
       <button class="btn btn-got" onclick="verdict(true)">&#x2713;&nbsp; Got it</button>
@@ -294,7 +174,6 @@
     </div>
   </div>
 </div>
-
 <script>
 const ALL_CARDS=[
 {s:"Memory Layout",q:"Name the five classic segments of a process's virtual address space and describe what each stores.",a:"1. TEXT — compiled machine instructions (read-only, executable).\n2. DATA — initialized global/static variables (e.g. int x = 5 at file scope).\n3. BSS — uninitialized or zero-initialized globals/statics; OS zeroes it at load time.\n4. HEAP — dynamic allocations (malloc/calloc); grows upward.\n5. STACK — local variables, parameters, return addresses; grows downward on x86."},
@@ -496,193 +375,156 @@ const ALL_CARDS=[
 {s:"Code: Tricky Patterns",q:"int arr[] = {10, 20, 30, 40, 50};\nprintf(\"%d\\n\", 2[arr]);",a:"ANSWER: Prints 30.\n\nIn C, a[i] is defined as *(a + i), which is commutative: *(2 + arr) == *(arr + 2) == arr[2] = 30.\n\nCompletely legal but intentionally confusing. You would never write this in production code."},
 {s:"Code: Tricky Patterns",q:"int n = 0;\nif (n = 5)\n    printf(\"True\\n\");\nelse\n    printf(\"False\\n\");",a:"WHAT: This is ASSIGNMENT, not comparison.\n\nn = 5 assigns 5 to n and evaluates to 5 (non-zero → true). Output: \"True\".\n\nBUG (most likely): Programmer meant n == 5.\n\nGCC warns with -Wparentheses. Writing if ((n = 5)) silences the warning and signals intentional assignment."},
 {s:"Code: Tricky Patterns",q:"size_t len = 0;\nif (len - 1 < 10) {\n    printf(\"small\\n\");\n}",a:"BUG — Unsigned underflow:\nlen is size_t (unsigned). len - 1 = 0 - 1 wraps to SIZE_MAX (18446744073709551615 on 64-bit).\n\nSIZE_MAX < 10 is FALSE. \"small\" is never printed.\n\nThis is a very common bug with size_t in loop termination.\n\nFIX:\n  if (len > 0 && len - 1 < 10) { ... }\n  // OR: if (len < 11) { ... }"},
-{s:"Code: Tricky Patterns",q:"void *memdup(const void *src,\n             size_t n) {\n    void *dst = malloc(n);\n    if (dst) memcpy(dst, src, n);\n    return dst;\n}\n\n/* Is this correct? */",a:"ASSESSMENT — Correct and well-written:\n\n- Checks malloc return before use.\n- Returns NULL on allocation failure.\n- Works for any type (void*).\n- No UB.\n\nMINOR IMPROVEMENTS:\n1. If n == 0, malloc may return NULL or a unique pointer; memcpy with n==0 is safe. Consider: if (n == 0) return NULL;\n2. Document that caller must free().\n3. Could add: if (!src) return NULL;"}
+{s:"Code: Tricky Patterns",q:"void *memdup(const void *src,\n             size_t n) {\n    void *dst = malloc(n);\n    if (dst) memcpy(dst, src, n);\n    return dst;\n}\n\n/* Is this correct? */",a:"ASSESSMENT — Correct and well-written:\n\n- Checks malloc return before use.\n- Returns NULL on allocation failure.\n- Works for any type (void*).\n- No UB.\n\nMINOR IMPROVEMENTS:\n1. If n == 0, malloc may return NULL or a unique pointer; memcpy with n==0 is safe. Consider: if (n == 0) return NULL;\n2. Document that caller must free().\n3. Could add: if (!src) return NULL;"},
+{s:"Memory Functions",q:"What is mmap()? How does it differ from malloc() for large allocations?",a:"mmap() maps pages directly from the OS into the process's address space. malloc() uses a heap managed by the C runtime (which itself calls mmap or sbrk internally).\n\nFor large allocations, glibc's malloc actually uses mmap internally (threshold ~128 KB). Key differences:\n- mmap is page-aligned and page-granular (4 KB minimum).\n- mmap'd memory is returned to the OS on munmap; free'd heap memory may be retained by the allocator.\n- mmap has higher per-call overhead (syscall) but avoids fragmentation for large blocks."},
+{s:"Memory Functions",q:"What is posix_memalign()? When would you use it instead of malloc()?",a:"posix_memalign(&ptr, alignment, size) allocates size bytes aligned to alignment (must be a power of 2 and a multiple of sizeof(void*)).\n\nUse cases:\n- SIMD instructions (SSE/AVX) requiring 16/32/64-byte alignment.\n- DMA buffers requiring page alignment.\n- Hardware that requires specific alignment for memory-mapped I/O.\n\nC11 alternative: aligned_alloc(alignment, size)."},
+{s:"Memory Functions",q:"What happens when you call free() on a pointer not returned by malloc/calloc/realloc?",a:"Undefined behavior. The heap allocator's internal metadata (block headers, free-list pointers) will be corrupted because the pointer doesn't correspond to a valid allocation.\n\nCommon examples that cause this:\n- free(&stack_variable)\n- free(ptr + offset)  (pointer into the middle of a block)\n- free(string_literal)\n\nAll of these are UB and will likely crash or silently corrupt the heap."},
+{s:"Memory Functions",q:"What is a memory pool / arena allocator? Why would you use one in C?",a:"A memory pool pre-allocates a large block and hands out fixed-size chunks from it. An arena allocates linearly (bump pointer) and frees everything at once.\n\nAdvantages:\n- O(1) allocation/deallocation (no free-list traversal).\n- Zero fragmentation within the pool.\n- Cache-friendly (allocations are contiguous).\n- Bulk free: destroy the entire arena in one call.\n\nUsed in: game engines, parsers, network servers, request-scoped allocations."},
+{s:"Memory Functions",q:"What is the difference between stack allocation and heap allocation in terms of performance?",a:"Stack allocation: adjusting the stack pointer (one instruction, ~1 cycle). Deallocation is automatic on function return.\n\nHeap allocation: malloc traverses a free-list, may call sbrk/mmap (syscall). Orders of magnitude slower. free() must coalesce blocks.\n\nRule of thumb:\n- Stack for small, fixed-size, short-lived data.\n- Heap for large, variable-size, or long-lived data.\n- Stack is ~100-1000x faster for allocation itself."},
+{s:"Pointers",q:"What is the difference between int (*p)[10] and int *p[10]?",a:"int (*p)[10]  — p is a POINTER TO an array of 10 ints.\n  p points to the whole array; *p is the array; (*p)[i] accesses elements.\n  sizeof(*p) = 40 (the whole array).\n\nint *p[10]   — p is an ARRAY OF 10 pointers to int.\n  p[i] is a pointer; *p[i] accesses the int it points to.\n  sizeof(p) = 80 (10 pointers on 64-bit)."},
+{s:"Pointers",q:"Can you compare two pointers with < or > in C? What are the rules?",a:"Only if both pointers point into the SAME array (or one past the end). Comparing pointers to different objects is undefined behavior.\n\n  int a[10], b[10];\n  int *p = &a[3], *q = &a[7];\n  p < q   // OK, both in array a\n\n  int *r = &b[0];\n  p < r   // UNDEFINED BEHAVIOR\n\n== and != can compare any two pointers of compatible type (and can compare against NULL)."},
+{s:"Pointers",q:"What is pointer decay? In what contexts does an array NOT decay to a pointer?",a:"Pointer decay: when an array name is used in an expression, it converts to a pointer to its first element.\n\nExceptions (array does NOT decay):\n1. sizeof(arr) — returns full array size, not pointer size.\n2. &arr — yields a pointer-to-array type, not pointer-to-element.\n3. String literal used to initialize char[] — the literal initializes the array, not a pointer.\n4. _Alignof(arr) — gives alignment of the array type."},
+{s:"Pointers",q:"What is a callback function in C? How do you implement one?",a:"A callback is a function passed as an argument (via function pointer) to another function, to be called later.\n\n  typedef void (*Callback)(int result);\n\n  void do_work(int x, Callback on_done) {\n      int result = x * 2;\n      on_done(result);  // invoke callback\n  }\n\n  void my_handler(int r) {\n      printf(\"Result: %d\\n\", r);\n  }\n\n  do_work(21, my_handler);  // prints 42\n\nUsed in: qsort comparator, signal handlers, event-driven I/O, plugin systems."},
+{s:"Concurrency",q:"What is a condition variable? How is it used with a mutex?",a:"A condition variable lets a thread sleep until a condition is signaled by another thread. Always used WITH a mutex:\n\n  pthread_mutex_lock(&mtx);\n  while (!condition)  // must be a WHILE loop (spurious wakeups)\n      pthread_cond_wait(&cond, &mtx);  // atomically unlocks mutex + sleeps\n  // condition is true, mutex is held\n  pthread_mutex_unlock(&mtx);\n\nSignaling thread:\n  pthread_mutex_lock(&mtx);\n  condition = true;\n  pthread_cond_signal(&cond);  // wake one waiter\n  pthread_mutex_unlock(&mtx);"},
+{s:"Concurrency",q:"Why must you use a while loop (not if) when waiting on a condition variable?",a:"Spurious wakeups: pthread_cond_wait may return even when no signal was sent. The POSIX spec explicitly allows this.\n\nAlso: if multiple threads wait, pthread_cond_broadcast wakes ALL of them, but only one should proceed. The others must re-check the condition and go back to sleep.\n\n  // WRONG:\n  if (!ready) pthread_cond_wait(&cv, &mtx);\n\n  // CORRECT:\n  while (!ready) pthread_cond_wait(&cv, &mtx);"},
+{s:"Concurrency",q:"What is a reader-writer lock? When would you use one instead of a mutex?",a:"A rwlock allows multiple concurrent readers OR one exclusive writer (but not both).\n\n  pthread_rwlock_rdlock(&rw);  // shared read\n  pthread_rwlock_wrlock(&rw);  // exclusive write\n\nUse when: reads vastly outnumber writes (e.g. a config table read by many threads, updated rarely). Readers don't block each other, so throughput is higher than a plain mutex.\n\nDownside: more overhead per lock/unlock than a mutex. If writes are frequent, a mutex may be faster."},
+{s:"Concurrency",q:"What is thread-local storage (TLS)? How do you declare it in C?",a:"Thread-local storage gives each thread its own copy of a variable. One thread's writes don't affect another's copy.\n\nC11: _Thread_local int counter = 0;\nGCC:  __thread int counter = 0;\npthreads API: pthread_key_create / pthread_setspecific / pthread_getspecific\n\nUse cases: per-thread error codes (errno is thread-local), per-thread caches, per-thread allocators, re-entrant libraries."},
+{s:"Concurrency",q:"What is the difference between pthread_cond_signal and pthread_cond_broadcast?",a:"pthread_cond_signal: wakes at least ONE waiting thread. Use when only one thread can make progress (e.g. one item added to a queue → one consumer).\n\npthread_cond_broadcast: wakes ALL waiting threads. Use when all waiters should re-evaluate (e.g. a shared condition changed that affects everyone, or when shutting down).\n\nBroadcast is always safe but less efficient. Signal is an optimization when you know only one waiter should proceed."},
+{s:"Concurrency",q:"What is a semaphore? How does it differ from a mutex?",a:"A semaphore is a counter that threads can increment (sem_post) or decrement-and-wait (sem_wait). When the count is 0, sem_wait blocks.\n\nKey differences from a mutex:\n- A mutex is binary (locked/unlocked); a semaphore can count to N.\n- A mutex must be unlocked by the SAME thread that locked it; a semaphore can be posted by ANY thread.\n- A semaphore can synchronize between threads and processes.\n\nUse: limiting concurrency (max N connections), producer-consumer (counting items in queue)."},
+{s:"Concurrency",q:"What is a memory barrier / memory fence? Why is it needed?",a:"A memory barrier is an instruction that prevents the CPU and compiler from reordering memory operations across it.\n\nNeeded because:\n1. Compilers reorder instructions for optimization.\n2. CPUs reorder loads and stores for performance (out-of-order execution, store buffers).\n\nWithout barriers, Thread A's write may not be visible to Thread B even after synchronization appears complete in source code.\n\nC11 atomics include memory ordering: memory_order_acquire, memory_order_release, memory_order_seq_cst. Mutexes implicitly include full barriers."},
+{s:"Concurrency",q:"What is the difference between volatile and _Atomic in C?",a:"volatile: tells the compiler not to cache the variable in a register. Does NOT guarantee atomicity, does NOT prevent CPU reordering, does NOT prevent data races. Not sufficient for thread synchronization.\n\n_Atomic (C11): guarantees indivisible read/write, prevents torn reads, enforces memory ordering between threads. IS sufficient for thread synchronization on simple operations.\n\nUse volatile for: hardware registers, signal handlers.\nUse _Atomic for: inter-thread communication."},
+{s:"Concurrency",q:"What is fork() vs creating a thread? When would you choose each?",a:"fork(): creates a NEW PROCESS with a copy of the entire address space. Separate memory, file descriptors are duplicated.\n- Advantage: complete isolation (crash in child doesn't kill parent).\n- Disadvantage: heavy (copy-on-write helps but still expensive), IPC needed to communicate.\n\nThreads: share the same address space, file descriptors, heap.\n- Advantage: lightweight creation, easy data sharing.\n- Disadvantage: one thread's bug can corrupt all threads; synchronization required.\n\nChoose fork for: isolation, running external programs (exec). Choose threads for: shared-memory parallelism, I/O concurrency."},
+{s:"Concurrency",q:"What is pthread_join()? What happens if you don't join or detach a thread?",a:"pthread_join(tid, &retval) blocks the caller until thread tid exits, then retrieves its return value and frees its resources.\n\nIf you neither join nor detach: the thread's resources (stack, thread ID) are never freed — a resource leak (zombie thread). Accumulating these can eventually exhaust thread limits.\n\npthread_detach(tid): marks the thread so its resources are automatically freed on exit. Use when you don't need the return value.\n\nRule: every thread must be either joined or detached."},
+{s:"Sockets & Networking",q:"What is the socket lifecycle for a TCP server? List the system calls in order.",a:"1. socket()   — create a socket file descriptor.\n2. bind()     — bind to an address (IP + port).\n3. listen()   — mark as passive (accepting connections); set backlog.\n4. accept()   — block until a client connects; returns a NEW fd for that connection.\n5. recv()/send() — read/write data on the connection fd.\n6. close()    — close the connection fd (and eventually the listening fd).\n\nClient side: socket() → connect() → send()/recv() → close()."},
+{s:"Sockets & Networking",q:"What is the difference between TCP and UDP?",a:"TCP (Transmission Control Protocol):\n- Connection-oriented (3-way handshake).\n- Reliable, ordered delivery. Retransmits lost packets.\n- Stream-based (no message boundaries).\n- Higher overhead (connection state, ACKs).\n\nUDP (User Datagram Protocol):\n- Connectionless (no handshake).\n- Unreliable: packets can be lost, duplicated, reordered.\n- Message-based (preserves boundaries).\n- Lower overhead, lower latency.\n\nTCP for: HTTP, SSH, database connections. UDP for: DNS, video streaming, gaming."},
+{s:"Sockets & Networking",q:"What is the purpose of htonl(), htons(), ntohl(), ntohs()?",a:"These convert between host byte order and network byte order:\n- htonl: host to network, 32-bit (for IP addresses).\n- htons: host to network, 16-bit (for port numbers).\n- ntohl / ntohs: network to host.\n\nNetwork byte order is always big-endian (most significant byte first). x86 is little-endian. Without conversion, a port number 80 (0x0050) would be sent as 0x5000 (20480) on x86.\n\nAlways use these when filling sockaddr_in fields."},
+{s:"Sockets & Networking",q:"What is SO_REUSEADDR? Why is it almost always needed on server sockets?",a:"setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));\n\nAllows binding to a port that is in the TIME_WAIT state (from a recently closed connection). Without it, restarting a server immediately after stopping it fails with 'Address already in use' because the OS holds the port in TIME_WAIT for ~60 seconds.\n\nAlso allows multiple sockets to bind to the same port if they bind to different addresses."},
+{s:"Sockets & Networking",q:"What is select() / poll() / epoll()? Why would you use them?",a:"All are I/O multiplexing mechanisms — they let one thread monitor MULTIPLE file descriptors for readiness.\n\nselect(): oldest, portable. Limited to FD_SETSIZE (typically 1024) descriptors. O(n) per call.\n\npoll(): no fd limit. Still O(n) per call (scans entire array).\n\nepoll() (Linux-specific): O(1) for ready events. Scales to millions of connections. Used by nginx, Node.js, etc.\n\nUse case: a server handling thousands of connections without one-thread-per-connection."},
+{s:"Sockets & Networking",q:"Why must you handle partial sends and receives with TCP sockets?",a:"TCP is a STREAM protocol — send() and recv() may transfer fewer bytes than requested:\n\n- send(fd, buf, 1000, 0) may return 500 (kernel buffer full).\n- recv(fd, buf, 1000, 0) may return 100 (only 100 bytes available so far).\n\nYou MUST loop:\n  size_t total = 0;\n  while (total < len) {\n      ssize_t n = send(fd, buf+total, len-total, 0);\n      if (n <= 0) { /* handle error/close */ break; }\n      total += n;\n  }\n\nThis is NOT needed for UDP (datagrams are atomic)."},
+{s:"Sockets & Networking",q:"What is the difference between blocking and non-blocking sockets?",a:"Blocking (default): recv() blocks until data arrives. accept() blocks until a connection arrives. Can hang the thread.\n\nNon-blocking: recv()/accept() return immediately with EAGAIN/EWOULDBLOCK if no data/connection is ready. The application must poll or use select/epoll.\n\nSet non-blocking:\n  int flags = fcntl(fd, F_GETFL, 0);\n  fcntl(fd, F_SETFL, flags | O_NONBLOCK);\n\nNon-blocking + epoll is the standard pattern for high-performance servers."},
+{s:"Sockets & Networking",q:"What is a sockaddr_in structure? What fields does it contain?",a:"struct sockaddr_in {\n    sa_family_t    sin_family;  // AF_INET\n    in_port_t      sin_port;    // port (network byte order)\n    struct in_addr sin_addr;    // IP (network byte order)\n    char           sin_zero[8]; // padding\n};\n\nUsage:\n  struct sockaddr_in addr;\n  addr.sin_family = AF_INET;\n  addr.sin_port = htons(8080);\n  addr.sin_addr.s_addr = INADDR_ANY;  // bind to all interfaces\n\nCast to (struct sockaddr*) when passing to bind/connect/accept."},
+{s:"Sockets & Networking",q:"What does the listen() backlog parameter mean?",a:"listen(fd, backlog) marks the socket as passive and sets the maximum length of the queue of PENDING connections — connections that have completed the TCP 3-way handshake but haven't been accept()ed yet.\n\nIf the queue is full, new connection attempts get ECONNREFUSED (or silently dropped, depending on OS).\n\nTypical values: 5 for small servers, 128 or SOMAXCONN for production servers. The OS may cap it (Linux: net.core.somaxconn, default 4096 on modern kernels)."},
+{s:"SQL & Databases",q:"What are the four types of SQL JOINs? Explain each.",a:"INNER JOIN: returns only rows with matching keys in BOTH tables.\n\nLEFT (OUTER) JOIN: returns all rows from the left table + matching rows from the right. Non-matching right columns are NULL.\n\nRIGHT (OUTER) JOIN: opposite of LEFT — all rows from the right table.\n\nFULL (OUTER) JOIN: returns all rows from both tables. Non-matching sides are NULL.\n\nAlso: CROSS JOIN — Cartesian product (every row × every row). No ON clause."},
+{s:"SQL & Databases",q:"What is the difference between WHERE and HAVING in SQL?",a:"WHERE filters rows BEFORE grouping (operates on individual rows).\nHAVING filters groups AFTER GROUP BY (operates on aggregated results).\n\n  SELECT dept, COUNT(*) as cnt\n  FROM employees\n  WHERE salary > 50000       -- filter individual rows first\n  GROUP BY dept\n  HAVING COUNT(*) > 5;       -- then filter groups\n\nYou cannot use aggregate functions (COUNT, SUM, AVG) in WHERE — only in HAVING."},
+{s:"SQL & Databases",q:"What are ACID properties of a database transaction?",a:"Atomicity: a transaction is all-or-nothing. If any part fails, the entire transaction is rolled back.\n\nConsistency: a transaction moves the database from one valid state to another. Constraints are never violated.\n\nIsolation: concurrent transactions behave as if they ran serially. Levels: READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE.\n\nDurability: once committed, the data survives crashes (written to non-volatile storage / WAL)."},
+{s:"SQL & Databases",q:"What is a prepared statement? Why should you always use them?",a:"A prepared statement separates SQL structure from data:\n\n  PREPARE stmt FROM 'SELECT * FROM users WHERE id = ?';\n  EXECUTE stmt USING @user_id;\n\nBenefits:\n1. SQL injection prevention — parameters are never interpolated into the query string; they're sent as typed data.\n2. Performance — the DB parses and plans the query once, then reuses the plan for different parameter values.\n3. Correctness — no need to manually escape quotes or special characters."},
+{s:"SQL & Databases",q:"What is ODBC? What is its architecture?",a:"ODBC (Open Database Connectivity) is a standard C API for accessing databases regardless of the DBMS.\n\nArchitecture (3 layers):\n1. Application — calls ODBC functions (SQLConnect, SQLExecDirect, etc.).\n2. Driver Manager — loads the correct driver based on the DSN (Data Source Name), routes calls.\n3. Driver — translates ODBC calls into the database's native protocol (e.g., PostgreSQL wire protocol, Oracle OCI).\n\nA DSN specifies: driver, server, database, credentials. Configured in odbc.ini (Linux) or ODBC Data Source Administrator (Windows)."},
+{s:"SQL & Databases",q:"What is JDBC? How does it compare to ODBC?",a:"JDBC (Java Database Connectivity) is Java's standard API for database access.\n\nSimilarities to ODBC:\n- Same concept: abstract API → driver → database.\n- Uses connection strings and drivers.\n\nDifferences:\n- JDBC is Java-only; ODBC is C-based (usable from many languages).\n- JDBC drivers are Java classes loaded at runtime; ODBC drivers are native shared libraries.\n- JDBC has 4 driver types (Type 1 = JDBC-ODBC bridge, Type 4 = pure Java, most common).\n\nJDBC connection:\n  Connection conn = DriverManager.getConnection(url, user, pass);"},
+{s:"SQL & Databases",q:"What are SQL transaction isolation levels? What problems does each prevent?",a:"READ UNCOMMITTED: sees uncommitted data from other transactions (dirty reads). Fastest, least safe.\n\nREAD COMMITTED: only sees committed data. Prevents dirty reads. Default in PostgreSQL, Oracle.\n\nREPEATABLE READ: same query in a transaction returns the same rows. Prevents dirty reads + non-repeatable reads. Default in MySQL/InnoDB.\n\nSERIALIZABLE: transactions behave as if executed serially. Prevents all anomalies (including phantom reads). Slowest.\n\nPhantom read: a query returns different ROWS when re-executed (another transaction inserted/deleted)."},
+{s:"SQL & Databases",q:"What is an SQL index? When should you add one and when not?",a:"An index is a data structure (usually B-tree) that speeds up lookups on a column.\n\nAdd an index when:\n- Column is used frequently in WHERE, JOIN, or ORDER BY.\n- Column has high cardinality (many distinct values).\n- Table is large and queries are slow.\n\nDon't add when:\n- Table is small (full scan is fast enough).\n- Column is written far more often than read (indexes slow down INSERT/UPDATE/DELETE).\n- Column has low cardinality (e.g., boolean — index won't help much).\n\nPrimary keys are automatically indexed."},
+{s:"SQL & Databases",q:"What is connection pooling? Why is it important?",a:"Connection pooling reuses a fixed set of database connections instead of opening/closing one per request.\n\nWhy it matters:\n- Opening a DB connection is expensive (~10-100ms: TCP handshake, TLS, authentication, session setup).\n- A pool opens N connections at startup and hands them out on demand.\n- When a request finishes, the connection goes back to the pool (not closed).\n\nTypical pool sizes: 10-50 connections per application instance. Sized based on DB's max_connections and expected concurrency."},
+{s:"TLS & Security",q:"What is TLS? How does the TLS handshake work at a high level?",a:"TLS (Transport Layer Security) encrypts communication between a client and server.\n\nTLS 1.2 handshake (simplified):\n1. ClientHello — client sends supported cipher suites, TLS version, random nonce.\n2. ServerHello — server picks a cipher suite, sends its certificate.\n3. Client verifies certificate against trusted CAs.\n4. Key exchange — client and server derive a shared secret (e.g., via ECDHE).\n5. Both sides derive symmetric session keys from the shared secret.\n6. Encrypted communication begins.\n\nTLS 1.3 reduces this to 1 round-trip (1-RTT) by combining steps."},
+{s:"TLS & Security",q:"What is the difference between symmetric and asymmetric encryption?",a:"Symmetric: same key encrypts and decrypts. Fast (AES-256: ~GBps). Problem: both parties must share the key securely.\n\nAsymmetric: public key encrypts, private key decrypts (or vice versa for signing). Slow (~1000x slower). Solves key distribution: the public key can be shared openly.\n\nTLS uses BOTH:\n- Asymmetric (RSA/ECDHE) during handshake to securely exchange a symmetric key.\n- Symmetric (AES-GCM) for bulk data encryption afterward.\n\nThis is called hybrid encryption."},
+{s:"TLS & Security",q:"What is a certificate chain of trust? What is a CA?",a:"A CA (Certificate Authority) is a trusted entity that signs certificates.\n\nChain of trust:\n1. Root CA — self-signed, pre-installed in browsers/OS trust stores. (e.g., DigiCert, Let's Encrypt's ISRG Root).\n2. Intermediate CA — signed by the root CA. Signs leaf certificates.\n3. Leaf certificate — the server's certificate, signed by the intermediate.\n\nVerification: client checks that the leaf cert is signed by an intermediate, which is signed by a trusted root. If any link is broken or expired, the connection is rejected."},
+{s:"TLS & Security",q:"What is mutual TLS (mTLS)? When is it used?",a:"In standard TLS, only the SERVER presents a certificate. The client verifies the server but the server doesn't verify the client.\n\nIn mTLS, BOTH sides present certificates:\n1. Server sends its cert → client verifies.\n2. Client sends its cert → server verifies.\n\nUse cases:\n- Service-to-service authentication in microservices (Kubernetes service mesh, Istio).\n- Zero-trust networking.\n- API authentication (instead of API keys).\n- IoT device authentication."},
+{s:"TLS & Security",q:"What is the difference between TLS 1.2 and TLS 1.3?",a:"TLS 1.3 improvements:\n- Faster handshake: 1-RTT instead of 2-RTT. Supports 0-RTT resumption.\n- Removed insecure algorithms: no RSA key exchange, no CBC, no RC4, no SHA-1, no static DH.\n- Simpler cipher suite negotiation (only 5 suites vs dozens).\n- Encrypted more of the handshake (certificate is now encrypted).\n- Mandatory forward secrecy (ECDHE only).\n\nTLS 1.0 and 1.1 are deprecated. TLS 1.2 is still widely used. TLS 1.3 is preferred."},
+{s:"TLS & Security",q:"What is certificate pinning? What are its pros and cons?",a:"Certificate pinning: the application hardcodes which certificate (or public key) it expects from a server, instead of trusting any CA-signed cert.\n\nPros:\n- Prevents attacks where an attacker obtains a fraudulent cert from a compromised CA.\n- Stronger security for critical connections.\n\nCons:\n- Painful certificate rotation — must update and deploy the application when the cert changes.\n- Can brick the app if the pinned cert expires and the app hasn't been updated.\n\nCommonly used in mobile apps for API servers. Less common in browsers (deprecated in Chrome)."},
+{s:"TLS & Security",q:"What is forward secrecy? Why does it matter?",a:"Forward secrecy (Perfect Forward Secrecy / PFS): even if the server's private key is later compromised, past recorded sessions cannot be decrypted.\n\nAchieved by: using ephemeral key exchange (ECDHE). Each session generates a unique shared secret that is discarded after use. The server's private key is only used for authentication (signing), not for deriving the session key.\n\nWithout PFS (static RSA key exchange): an attacker who records traffic and later obtains the private key can decrypt ALL past sessions. This is why TLS 1.3 mandates ECDHE."},
+{s:"Kubernetes",q:"What is Kubernetes? What problem does it solve?",a:"Kubernetes (K8s) is a container orchestration platform. It automates deployment, scaling, and management of containerized applications.\n\nProblems it solves:\n- Scheduling: decides which machine runs which container.\n- Scaling: automatically adds/removes container replicas based on load.\n- Self-healing: restarts crashed containers, replaces unhealthy nodes.\n- Service discovery: containers find each other by name, not IP.\n- Rolling updates: deploy new versions with zero downtime.\n- Configuration management: inject config and secrets into containers."},
+{s:"Kubernetes",q:"What is a Pod? Why is it the smallest deployable unit (not a container)?",a:"A Pod is one or more containers that share:\n- Network namespace (same IP address, can communicate via localhost).\n- Storage volumes.\n- Lifecycle (started/stopped together).\n\nWhy not just a container? Some workloads need tightly-coupled containers:\n- Sidecar pattern: main app + log collector, or main app + TLS proxy (Envoy).\n- Init containers: run setup tasks before the main container starts.\n\nMost pods have exactly one container. Multi-container pods are for patterns that require co-location."},
+{s:"Kubernetes",q:"What is a Deployment? How does it differ from a Pod?",a:"A Deployment is a higher-level resource that manages Pods:\n- Declares the DESIRED state (image, replicas, resource limits).\n- Creates a ReplicaSet that ensures the right number of Pods are running.\n- Handles rolling updates and rollbacks.\n\nYou almost never create Pods directly. You create a Deployment, and it creates the Pods for you. If a Pod crashes, the Deployment/ReplicaSet replaces it automatically.\n\n  kubectl create deployment myapp --image=myapp:v2 --replicas=3"},
+{s:"Kubernetes",q:"What is a Service in Kubernetes? What are the main types?",a:"A Service provides stable networking for a set of Pods (which have ephemeral IPs).\n\nTypes:\n- ClusterIP (default): internal-only virtual IP. Other pods access it by name (DNS).\n- NodePort: exposes the service on a static port on every node's IP. External access via <NodeIP>:<NodePort>.\n- LoadBalancer: provisions a cloud load balancer (AWS ELB, GCP LB) pointing to the service.\n- ExternalName: maps to an external DNS name (CNAME).\n\nServices use label selectors to route traffic to the right Pods."},
+{s:"Kubernetes",q:"What are ConfigMaps and Secrets? How do they differ?",a:"ConfigMaps: store non-sensitive configuration as key-value pairs. Injected into Pods as environment variables or mounted as files.\n\nSecrets: store sensitive data (passwords, API keys, TLS certs). Base64-encoded (NOT encrypted by default — enable encryption at rest). Injected the same way as ConfigMaps.\n\nKey difference: Secrets are treated specially by K8s — access can be restricted via RBAC, they are stored in tmpfs (not written to disk on nodes), and they are not logged.\n\nBoth decouple configuration from container images."},
+{s:"Kubernetes",q:"What are liveness and readiness probes?",a:"Liveness probe: 'Is the container still alive?'\n- If it fails, K8s RESTARTS the container.\n- Detects: deadlocks, hung processes, unresponsive apps.\n\nReadiness probe: 'Is the container ready to receive traffic?'\n- If it fails, K8s REMOVES the pod from the Service's endpoints (stops sending traffic).\n- Detects: app still loading, dependency not available.\n\nProbe types: HTTP GET, TCP socket, or exec command.\n\nExample:\n  livenessProbe:\n    httpGet:\n      path: /healthz\n      port: 8080\n    initialDelaySeconds: 10\n    periodSeconds: 5"},
+{s:"Kubernetes",q:"What is a Namespace in Kubernetes?",a:"A Namespace is a virtual cluster within a physical cluster. It provides:\n- Isolation: resources in different namespaces don't collide (two services can have the same name in different namespaces).\n- Access control: RBAC policies can be scoped to a namespace.\n- Resource quotas: limit CPU/memory per namespace.\n\nDefault namespaces:\n- default: where resources go if no namespace is specified.\n- kube-system: K8s internal components.\n- kube-public: readable by all users.\n\nUse namespaces to separate: dev/staging/prod, or team-a/team-b."},
+{s:"Kubernetes",q:"What does kubectl get pods and kubectl describe pod do?",a:"kubectl get pods:\n  Lists all pods in the current namespace with: NAME, READY, STATUS, RESTARTS, AGE.\n  Quick overview. Add -o wide for node/IP info, -o yaml for full spec.\n\nkubectl describe pod <name>:\n  Detailed view: events, conditions, container statuses, resource requests/limits, volumes, node assignment, restart reasons.\n  The EVENTS section at the bottom is the most useful for debugging (shows scheduling, pulling, starting, crashing)."},
+{s:"Code: Memory & Pointers",q:"char *name = malloc(strlen(input));\nstrcpy(name, input);",a:"BUG — Off-by-one on malloc size:\nstrlen(input) returns the length WITHOUT the null terminator. malloc(strlen(input)) allocates one byte too few. strcpy copies the '\\0', writing one byte past the allocation — heap overflow.\n\nFIX:\n  char *name = malloc(strlen(input) + 1);\n  if (!name) return NULL;\n  strcpy(name, input);\n\n  // Or simply: char *name = strdup(input);"},
+{s:"Code: Memory & Pointers",q:"int *p = realloc(p, new_size);\nif (!p) {\n    fprintf(stderr, \"OOM\\n\");\n    exit(1);\n}",a:"BUG — Assigning realloc result to the same pointer:\nIf realloc fails and returns NULL, the ORIGINAL pointer is overwritten — it's now lost. The previously allocated memory is leaked and unrecoverable.\n\nFIX — Use a temporary pointer:\n  int *tmp = realloc(p, new_size);\n  if (!tmp) {\n      free(p);  // can still free original\n      exit(1);\n  }\n  p = tmp;"},
+{s:"Code: Concurrency",q:"void *producer(void *arg) {\n    pthread_mutex_lock(&mtx);\n    enqueue(data);\n    pthread_cond_signal(&cond);\n    pthread_mutex_unlock(&mtx);\n}\n\nvoid *consumer(void *arg) {\n    pthread_mutex_lock(&mtx);\n    if (queue_empty())\n        pthread_cond_wait(&cond, &mtx);\n    item = dequeue();\n    pthread_mutex_unlock(&mtx);\n}",a:"BUG — Uses 'if' instead of 'while' for condition wait:\nSpurious wakeups can cause pthread_cond_wait to return even when no signal was sent. The consumer dequeues from an empty queue — UB or crash.\n\nAlso: if multiple consumers exist, one may consume the item before another wakes up.\n\nFIX:\n  while (queue_empty())  // WHILE, not IF\n      pthread_cond_wait(&cond, &mtx);"},
+{s:"Code: Concurrency",q:"void *worker(void *arg) {\n    while (1) {\n        pthread_mutex_lock(&mtx);\n        if (shutdown_flag) {\n            return NULL;  // BUG\n        }\n        do_work();\n        pthread_mutex_unlock(&mtx);\n    }\n}",a:"BUG — Returns while holding the mutex:\nIf shutdown_flag is true, the function returns NULL without calling pthread_mutex_unlock. The mutex is permanently locked — all other threads waiting on it will deadlock.\n\nFIX:\n  if (shutdown_flag) {\n      pthread_mutex_unlock(&mtx);  // unlock BEFORE return\n      return NULL;\n  }\n\nBetter pattern: use pthread_cleanup_push to guarantee unlock even on cancellation."},
+{s:"Code: Concurrency",q:"pthread_t t;\npthread_create(&t, NULL,\n               worker, NULL);\n/* ... main continues ... */\nprintf(\"Done\\n\");\nreturn 0;",a:"BUGS:\n\n1. Thread not joined or detached — resource leak (zombie thread). The thread's stack and metadata are never freed.\n\n2. main() may exit before the thread finishes — the entire process is terminated, killing the thread mid-execution. Any cleanup (flushing files, freeing resources) in the thread is skipped.\n\nFIX:\n  pthread_join(t, NULL);  // wait for thread\n  printf(\"Done\\n\");\n  return 0;\n\n  // OR: pthread_detach(t); if you don't need the result."},
+{s:"Code: Sockets",q:"int fd = socket(AF_INET, SOCK_STREAM, 0);\nstruct sockaddr_in addr;\naddr.sin_family = AF_INET;\naddr.sin_port = 8080;\naddr.sin_addr.s_addr = INADDR_ANY;\nbind(fd, (struct sockaddr*)&addr,\n     sizeof(addr));\nlisten(fd, 5);\nint client = accept(fd, NULL, NULL);",a:"BUGS:\n\n1. Port not in network byte order — addr.sin_port = 8080 stores 8080 in host byte order. On little-endian x86, this becomes port 36895 on the wire.\n   FIX: addr.sin_port = htons(8080);\n\n2. addr not zeroed — sin_zero and other padding may contain garbage, causing bind to fail or behave unpredictably.\n   FIX: memset(&addr, 0, sizeof(addr));\n\n3. No SO_REUSEADDR — server restart will fail with EADDRINUSE.\n\n4. No error checking on socket/bind/listen/accept."},
+{s:"Code: Sockets",q:"char buf[1024];\nint n = recv(fd, buf, sizeof(buf), 0);\nprintf(\"Received: %s\\n\", buf);",a:"BUGS:\n\n1. recv does not null-terminate — buf is not a C string. printf(\"%s\", buf) reads until it finds a '\\0' somewhere in memory — buffer over-read, possibly printing garbage or crashing.\n\n2. n not checked — recv returns -1 on error, 0 on connection close. Using buf without checking n is UB.\n\n3. Even with null-termination, recv may return a partial message (TCP is a stream).\n\nFIX:\n  int n = recv(fd, buf, sizeof(buf)-1, 0);\n  if (n <= 0) { /* handle */ return; }\n  buf[n] = '\\0';  // now it's a string"},
+{s:"Code: Sockets",q:"void send_all(int fd,\n              const char *buf,\n              size_t len) {\n    send(fd, buf, len, 0);\n}",a:"BUG — Ignores partial sends:\nTCP send() may send fewer bytes than requested (kernel buffer full). This silently drops the remaining data.\n\nAlso: send() return value not checked for errors (-1).\n\nFIX — Loop until all bytes are sent:\n  ssize_t send_all(int fd, const char *buf,\n                   size_t len) {\n      size_t total = 0;\n      while (total < len) {\n          ssize_t n = send(fd, buf+total,\n                          len-total, 0);\n          if (n <= 0) return -1;\n          total += n;\n      }\n      return total;\n  }"},
+{s:"Code: Sockets",q:"/* Simple TCP server */\nwhile (1) {\n    int client = accept(listen_fd,\n                        NULL, NULL);\n    handle_client(client);\n    close(client);\n}",a:"ISSUE — Single-threaded, blocking:\nhandle_client blocks the entire server. While serving one client, all other connections queue up in the listen backlog. If handle_client takes a long time, clients time out.\n\nThis is correct but not scalable.\n\nIMPROVEMENTS (pick one):\n1. Fork per connection: fork() after accept, handle in child.\n2. Thread per connection: pthread_create per client.\n3. Thread pool: fixed N workers, dispatch via queue.\n4. Non-blocking + epoll: single-threaded event loop (most scalable)."},
+{s:"Code: SQL",q:"char query[512];\nsprintf(query,\n  \"SELECT * FROM users \"\n  \"WHERE name = '%s'\",\n  user_input);\ndb_execute(query);",a:"BUG — SQL injection:\nIf user_input is:  ' OR '1'='1\nThe query becomes:\n  SELECT * FROM users WHERE name = '' OR '1'='1'\nThis matches ALL rows — authentication bypass, data exfiltration.\n\nAlso: sprintf can overflow query for long input.\n\nFIX — Use prepared statements / parameterized queries:\n  db_prepare(\"SELECT * FROM users WHERE name = ?\");\n  db_bind_param(1, user_input);\n  db_execute();\n\nNEVER interpolate user input into SQL strings."},
+{s:"Code: SQL",q:"SELECT name, COUNT(*)\nFROM orders\nWHERE COUNT(*) > 5\nGROUP BY name;",a:"BUG — Cannot use aggregate in WHERE:\nWHERE filters rows BEFORE grouping. COUNT(*) isn't available yet at that stage.\n\nFIX — Use HAVING:\n  SELECT name, COUNT(*)\n  FROM orders\n  GROUP BY name\n  HAVING COUNT(*) > 5;\n\nExecution order:\n  FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY\n\nHAVING operates on groups (after GROUP BY), which is when aggregates are available."}
 ];
 
-const LS_KEY = 'cflash_missed_v1';
-function saveMissed(cards) { try { localStorage.setItem(LS_KEY, JSON.stringify(cards.map(c=>c.q))); } catch(e) {} }
-function loadMissed() { try { const raw=localStorage.getItem(LS_KEY); if(!raw)return[]; return JSON.parse(raw).map(q=>ALL_CARDS.find(c=>c.q===q)).filter(Boolean); } catch(e){ return[]; } }
-function clearSaved() { try { localStorage.removeItem(LS_KEY); } catch(e) {} }
+const LS_KEY='cflash_missed_v1';
+function saveMissed(cards){ try{ localStorage.setItem(LS_KEY,JSON.stringify(cards.map(c=>c.q))); }catch(e){} }
+function loadMissed(){ try{ const r=localStorage.getItem(LS_KEY); if(!r)return[]; return JSON.parse(r).map(q=>ALL_CARDS.find(c=>c.q===q)).filter(Boolean); }catch(e){ return[]; } }
+function clearSaved(){ try{ localStorage.removeItem(LS_KEY); }catch(e){} }
 
 let deck=[],idx=0,flipped=false,got=0,missed=0,section='all',missedCards=[];
+function isCodeCard(c){ return c.s.startsWith('Code:'); }
 
-function isCodeCard(c) { return c.s.startsWith('Code:'); }
-
-function updateSavedPill() {
-  const saved = loadMissed();
-  const pill = document.getElementById('savedPill');
-  const bar = document.getElementById('savedBar');
-  if (saved.length > 0) {
-    pill.innerHTML = '&#9733; ' + saved.length + ' saved &mdash; tap to review';
-    pill.style.display = 'inline-block';
-    bar.classList.add('visible');
-  } else {
-    pill.style.display = 'none';
-    bar.classList.remove('visible');
-  }
+function updateSavedPill(){
+  const saved=loadMissed(); const pill=document.getElementById('savedPill'); const bar=document.getElementById('savedBar');
+  if(saved.length>0){ pill.innerHTML='&#9733; '+saved.length+' saved &mdash; tap to review'; pill.style.display='inline-block'; bar.classList.add('visible'); }
+  else{ pill.style.display='none'; bar.classList.remove('visible'); }
 }
 
-function filterSection() {
-  section = document.getElementById('sectionSel').value;
-  if (section === 'all') {
-    deck = [...ALL_CARDS];
-  } else if (section === '__concepts__') {
-    deck = ALL_CARDS.filter(c => !isCodeCard(c));
-  } else if (section === '__code__') {
-    deck = ALL_CARDS.filter(c => isCodeCard(c));
-  } else {
-    deck = ALL_CARDS.filter(c => c.s === section);
-  }
+function filterSection(){
+  section=document.getElementById('sectionSel').value;
+  if(section==='all') deck=[...ALL_CARDS];
+  else if(section==='__concepts__') deck=ALL_CARDS.filter(c=>!isCodeCard(c));
+  else if(section==='__code__') deck=ALL_CARDS.filter(c=>isCodeCard(c));
+  else deck=ALL_CARDS.filter(c=>c.s===section);
   resetDeck(false);
 }
 
-function shuffle() {
-  for(let i=deck.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; }
-  idx=0;got=0;missed=0;missedCards=[];flipped=false;render();
-}
+function shuffle(){ for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]; } idx=0;got=0;missed=0;missedCards=[];flipped=false;render(); }
 
-function resetDeck(doFilter=true) {
-  if(doFilter) filterSection();
-  idx=0;got=0;missed=0;missedCards=[];flipped=false;
-  document.getElementById('doneBanner').style.display='none';
-  document.getElementById('cardScene').classList.remove('hidden');
-  document.getElementById('footer').classList.remove('hidden');
-  document.getElementById('verdictRow').classList.add('verdict-hidden');
-  document.getElementById('cardInner').classList.remove('flipped');
-  render();
-}
+function resetDeck(doFilter=true){ if(doFilter)filterSection(); idx=0;got=0;missed=0;missedCards=[];flipped=false;
+  document.getElementById('doneBanner').style.display='none'; document.getElementById('cardScene').classList.remove('hidden');
+  document.getElementById('footer').classList.remove('hidden'); document.getElementById('verdictRow').classList.add('verdict-hidden');
+  document.getElementById('cardInner').classList.remove('flipped'); render(); }
 
-function reviewMissed() {
-  if(!missedCards.length)return;
-  deck=[...missedCards];
-  idx=0;got=0;missed=0;missedCards=[];flipped=false;
-  document.getElementById('doneBanner').style.display='none';
-  document.getElementById('cardScene').classList.remove('hidden');
-  document.getElementById('footer').classList.remove('hidden');
-  document.getElementById('verdictRow').classList.add('verdict-hidden');
-  document.getElementById('cardInner').classList.remove('flipped');
-  render();
-}
+function reviewMissed(){ if(!missedCards.length)return; deck=[...missedCards]; idx=0;got=0;missed=0;missedCards=[];flipped=false;
+  document.getElementById('doneBanner').style.display='none'; document.getElementById('cardScene').classList.remove('hidden');
+  document.getElementById('footer').classList.remove('hidden'); document.getElementById('verdictRow').classList.add('verdict-hidden');
+  document.getElementById('cardInner').classList.remove('flipped'); render(); }
 
-function reviewSaved() {
-  const saved = loadMissed();
-  if(!saved.length) return;
-  deck=[...saved]; section='all';
-  document.getElementById('sectionSel').value='all';
-  idx=0;got=0;missed=0;missedCards=[];flipped=false;
-  document.getElementById('doneBanner').style.display='none';
-  document.getElementById('cardScene').classList.remove('hidden');
-  document.getElementById('footer').classList.remove('hidden');
-  document.getElementById('verdictRow').classList.add('verdict-hidden');
-  document.getElementById('cardInner').classList.remove('flipped');
-  render();
-}
+function reviewSaved(){ const saved=loadMissed(); if(!saved.length)return; deck=[...saved]; section='all';
+  document.getElementById('sectionSel').value='all'; idx=0;got=0;missed=0;missedCards=[];flipped=false;
+  document.getElementById('doneBanner').style.display='none'; document.getElementById('cardScene').classList.remove('hidden');
+  document.getElementById('footer').classList.remove('hidden'); document.getElementById('verdictRow').classList.add('verdict-hidden');
+  document.getElementById('cardInner').classList.remove('flipped'); render(); }
 
-function clearSavedCards() {
-  const n = loadMissed().length;
-  if(!n) return;
-  if(!confirm('Clear all ' + n + ' saved cards?')) return;
-  clearSaved();
-  updateSavedPill();
-}
+function clearSavedCards(){ const n=loadMissed().length; if(!n)return; if(!confirm('Clear all '+n+' saved cards?'))return; clearSaved(); updateSavedPill(); }
 
-function flipCard() {
-  if(idx>=deck.length)return;
-  flipped=!flipped;
-  document.getElementById('cardInner').classList.toggle('flipped',flipped);
-  const vr=document.getElementById('verdictRow');
-  if(flipped) vr.classList.remove('verdict-hidden');
-  else vr.classList.add('verdict-hidden');
-}
+function flipCard(){ if(idx>=deck.length)return; flipped=!flipped; document.getElementById('cardInner').classList.toggle('flipped',flipped);
+  const vr=document.getElementById('verdictRow'); if(flipped)vr.classList.remove('verdict-hidden'); else vr.classList.add('verdict-hidden'); }
 
-function verdict(wasGot) {
-  if(!flipped)return;
-  if(wasGot) {
-    got++;
-    const saved = loadMissed().filter(c => c.q !== deck[idx].q);
-    saveMissed(saved);
-  } else {
-    missed++;
-    missedCards.push(deck[idx]);
-    const existing = loadMissed();
-    if(!existing.some(c => c.q === deck[idx].q)) saveMissed([...existing, deck[idx]]);
-  }
-  idx++;flipped=false;
-  document.getElementById('cardInner').classList.remove('flipped');
-  document.getElementById('verdictRow').classList.add('verdict-hidden');
-  updateSavedPill();
-  if(idx>=deck.length) showDone();
-  else render();
-}
+function verdict(wasGot){ if(!flipped)return;
+  if(wasGot){ got++; const saved=loadMissed().filter(c=>c.q!==deck[idx].q); saveMissed(saved); }
+  else{ missed++; missedCards.push(deck[idx]); const ex=loadMissed(); if(!ex.some(c=>c.q===deck[idx].q))saveMissed([...ex,deck[idx]]); }
+  idx++;flipped=false; document.getElementById('cardInner').classList.remove('flipped');
+  document.getElementById('verdictRow').classList.add('verdict-hidden'); updateSavedPill();
+  if(idx>=deck.length)showDone(); else render(); }
 
-function prevCard() {
-  if(idx>0){idx--;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('verdict-hidden');render();}
-}
-function nextCard() {
-  if(idx<deck.length-1){idx++;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('verdict-hidden');render();}
-}
+function prevCard(){ if(idx>0){idx--;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('verdict-hidden');render();} }
+function nextCard(){ if(idx<deck.length-1){idx++;flipped=false;document.getElementById('cardInner').classList.remove('flipped');document.getElementById('verdictRow').classList.add('verdict-hidden');render();} }
 
-function render() {
-  if(!deck.length)return;
-  const c=deck[Math.min(idx,deck.length-1)];
-  const code = isCodeCard(c);
-  // Front label
-  const frontLabel = document.getElementById('frontLabel');
-  frontLabel.innerHTML = (code ? 'Code Review' : 'Question') + ' &nbsp;&#x21C4; tap to flip';
-  // Front card styling
-  const cardFront = document.getElementById('cardFront');
-  cardFront.classList.toggle('code-card', code);
-  // Question text
-  const frontQ = document.getElementById('frontQ');
-  frontQ.textContent = c.q;
-  frontQ.classList.toggle('code-text', code);
-  // Answer
-  document.getElementById('backA').innerHTML = formatAnswer(c.a);
-  // Section pill
-  const pill = document.getElementById('sectionPill');
-  pill.textContent = c.s;
-  pill.className = 'section-pill ' + (code ? 'code' : 'concept');
-  // Counter
-  document.getElementById('cardCounter').textContent = 'Card '+(idx+1)+' of '+deck.length;
-  const done=got+missed;
-  document.getElementById('sTotal').textContent=deck.length;
-  document.getElementById('sGot').textContent=got;
-  document.getElementById('sMiss').textContent=missed;
+function render(){ if(!deck.length)return; const c=deck[Math.min(idx,deck.length-1)]; const code=isCodeCard(c);
+  document.getElementById('frontLabel').innerHTML=(code?'Code Review':'Question')+' &nbsp;&#x21C4; tap to flip';
+  document.getElementById('cardFront').classList.toggle('code-card',code);
+  const fq=document.getElementById('frontQ'); fq.textContent=c.q; fq.classList.toggle('code-text',code);
+  document.getElementById('backA').innerHTML=formatAnswer(c.a);
+  const pill=document.getElementById('sectionPill'); pill.textContent=c.s; pill.className='section-pill '+(code?'code':'concept');
+  document.getElementById('cardCounter').textContent='Card '+(idx+1)+' of '+deck.length;
+  const done=got+missed; document.getElementById('sTotal').textContent=deck.length;
+  document.getElementById('sGot').textContent=got; document.getElementById('sMiss').textContent=missed;
   document.getElementById('sLeft').textContent=deck.length-done;
-  document.getElementById('progressFill').style.width=(deck.length?Math.round(done/deck.length*100):0)+'%';
-}
+  document.getElementById('progressFill').style.width=(deck.length?Math.round(done/deck.length*100):0)+'%'; }
 
-function formatAnswer(a) {
-  const esc=a.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const parts=esc.split('\n');
-  let out='',inCode=false,codeBuf='';
-  for(const line of parts){
-    const isCode=/^  /.test(line)&&line.trim().length>0;
-    if(isCode){inCode=true;codeBuf+=(codeBuf?'\n':'')+line.trim();}
-    else{
-      if(inCode){out+='<pre>'+codeBuf+'</pre>';codeBuf='';inCode=false;}
-      out+=(out&&!out.endsWith('</pre>'))?'<br>'+line:line;
-    }
-  }
-  if(inCode)out+='<pre>'+codeBuf+'</pre>';
-  return out;
-}
+function formatAnswer(a){ const esc=a.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const parts=esc.split('\n'); let out='',inCode=false,codeBuf='';
+  for(const line of parts){ const ic=/^  /.test(line)&&line.trim().length>0;
+    if(ic){inCode=true;codeBuf+=(codeBuf?'\n':'')+line.trim();}
+    else{ if(inCode){out+='<pre>'+codeBuf+'</pre>';codeBuf='';inCode=false;} out+=(out&&!out.endsWith('</pre>'))?'<br>'+line:line; } }
+  if(inCode)out+='<pre>'+codeBuf+'</pre>'; return out; }
 
-function showDone() {
-  document.getElementById('cardScene').classList.add('hidden');
-  document.getElementById('footer').classList.add('hidden');
+function showDone(){ document.getElementById('cardScene').classList.add('hidden'); document.getElementById('footer').classList.add('hidden');
   document.getElementById('doneBanner').style.display='block';
   const pct=deck.length?Math.round(got/deck.length*100):0;
   document.getElementById('doneStats').textContent='You got '+got+' of '+deck.length+' correct ('+pct+'%). '+missed+' cards saved for review.';
   document.getElementById('reviewMissedBtn').style.display=missedCards.length>0?'inline-block':'none';
-  const savedCount=loadMissed().length;
-  const savedBtn=document.getElementById('reviewSavedDoneBtn');
-  savedBtn.textContent='Review all saved ('+savedCount+')';
-  savedBtn.style.display=savedCount>0?'inline-block':'none';
-}
+  const sc=loadMissed().length; const sb=document.getElementById('reviewSavedDoneBtn');
+  sb.textContent='Review all saved ('+sc+')'; sb.style.display=sc>0?'inline-block':'none'; }
 
-updateSavedPill();
-filterSection();
+updateSavedPill(); filterSection();
 </script>
 </body>
 </html>
